@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+  body { margin:0; background:#ffffff; color:#14251d; font-family:Pretendard,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#12855b; text-decoration:none; }
+  a:hover { color:#0c6644; }
+  input, button, select { font-family:inherit; }
+  @keyframes bob { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-8px) } }
+  @keyframes ngFloat { 0%,100% { translate:0 0 } 50% { translate:0 -7px } }
+  @keyframes ngFloatSoft { 0%,100% { translate:0 0 } 50% { translate:0 -5px } }
+</style>
+<style>image-slot[id^="carrier-"]::part(empty){display:none} image-slot[id^="carrier-"]::part(frame){background:#ffffff}</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div style="width:100%; overflow-x:clip">
+
+  <header style="position:sticky; top:0; z-index:50; padding:12px 16px">
+    <sc-if value="{{ scrolled }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:1080px; margin:0 auto; padding:12px 32px 12px 20px; border-radius:22px; background:rgba(255,255,255,0.6); backdrop-filter:blur(14px); box-shadow:0 8px 24px rgba(15,70,50,0.08); display:flex; align-items:center; gap:18px">
+        <div style="display:flex; align-items:center; gap:11px; margin-right:auto">
+          <img src="assets/netgo-logo-green-mark-v2.png" alt="넷고" style="width:30px; height:30px; display:block; object-fit:contain" />
+        </div>
+        <nav style="display:{{ r.navDisp }}; gap:22px; font-size:14px; font-weight:600; color:#4e6259">
+          <a href="rental.html" style="color:inherit">가전 렌탈</a><a href="#how" style="color:inherit">신청방법</a><a href="faq.html" style="color:inherit">FAQ</a>
+        </nav>
+      </div>
+    </sc-if>
+    <sc-if value="{{ atTop }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1080px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; gap:18px">
+        <div style="display:flex; align-items:center; gap:11px; margin-right:auto; color:#fff">
+          <img src="assets/netgo-logo-mark.png?v=2" alt="넷고" style="width:30px; height:30px; display:block; object-fit:contain" />
+          <span style="display:{{ r.brandDisp }}; font-size:19px; font-weight:800; letter-spacing:-0.03em">넷고</span>
+        </div>
+        <nav style="display:{{ r.navDisp }}; gap:22px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.78)">
+          <a href="rental.html" style="color:inherit">가전 렌탈</a><a href="#how" style="color:inherit">신청방법</a><a href="faq.html" style="color:inherit">FAQ</a>
+        </nav>
+      </div>
+    </sc-if>
+  </header>
+
+  <section style="position:relative; overflow:hidden; margin-top:-86px; padding:0; background-color:#14251d; background-image:radial-gradient(1.2px 1.2px at 24px 38px, rgba(255,255,255,0.85), transparent), radial-gradient(1px 1px at 140px 92px, rgba(255,255,255,0.6), transparent), radial-gradient(1.4px 1.4px at 212px 18px, rgba(214,255,236,0.9), transparent), radial-gradient(1.6px 1.6px at 310px 140px, rgba(255,255,255,0.7), transparent), radial-gradient(ellipse 34% 30% at 52% -4%, rgba(226,255,240,0.34) 0%, rgba(20,37,29,0) 70%), radial-gradient(ellipse 48% 44% at 18% -6%, rgba(58,196,150,0.5) 0%, rgba(20,37,29,0) 72%), radial-gradient(ellipse 46% 42% at 84% -2%, rgba(96,112,220,0.42) 0%, rgba(20,37,29,0) 72%), radial-gradient(ellipse 30% 26% at 66% 18%, rgba(150,92,210,0.18) 0%, rgba(20,37,29,0) 70%), linear-gradient(180deg, rgba(20,37,29,0) 40%, #0e1c16 100%); background-size:274px 232px, 274px 232px, 274px 232px, 400px 316px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%; background-repeat:repeat, repeat, repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat">
+    <div ref="{{ globeRef }}" aria-hidden="true" style="position:absolute; left:50%; bottom:0; width:min(760px,120vw); aspect-ratio:1 / 1; transform:translate(-50%,50%); cursor:grab; touch-action:pan-y; user-select:none"></div>
+    <div style="position:relative; max-width:1080px; margin:0 auto; padding:{{ r.heroPad }}; display:flex; flex-direction:column; align-items:center; text-align:center; pointer-events:none">
+      <div style="display:flex; flex-direction:column; align-items:center; pointer-events:auto">
+        <div style="font-size:12px; letter-spacing:0.2em; color:#8fe6bd; font-weight:700; text-transform:uppercase">NETGO</div>
+        <h1 style="margin:20px 0 0; color:#fff; font-size:clamp(32px,4.6vw,54px); line-height:1.12; letter-spacing:-0.045em; font-weight:800; text-wrap:balance">
+          인터넷을 고르는 새로운 방법
+        </h1>
+        <p style="margin:20px auto 0; max-width:460px; font-size:{{ r.heroDescFs }}; line-height:1.72; color:rgba(255,255,255,0.78); text-wrap:pretty">
+          <sc-if value="{{ r.desk }}" hint-placeholder-val="{{ true }}">내 환경에 맞는 인터넷을<br />풍성한 혜택과 함께 선물해드려요.</sc-if><sc-if value="{{ r.mob }}" hint-placeholder-val="{{ false }}"><span style="white-space:nowrap">내 환경에 맞는 인터넷을 풍성한 혜택과</span><br /><span style="white-space:nowrap">함께 선물해드려요.</span></sc-if>
+        </p>
+        <div style="margin:28px 0 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:center">
+          <a href="#apply" style="padding:16px 30px; border-radius:2px; background:#fff; color:#14251d; font-size:15.5px; font-weight:700; letter-spacing:-0.01em">온라인 신청</a>
+          <button type="button" onClick="{{ openCall }}" style="font-family:inherit; cursor:pointer; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid rgba(255,255,255,0.5); color:#fff; font-size:15.5px; font-weight:700; letter-spacing:-0.01em">전화 상담</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="problem" style="padding:72px 20px 0">
+    <div style="max-width:1080px; margin:0 auto">
+      <div style="text-align:center; max-width:520px; margin:0 auto">
+        <div style="font-size:13.5px; font-weight:800; color:#12855b">이런 고민 있으셨죠?</div>
+        <h2 style="margin:12px 0 0; font-size:clamp(26px,3.6vw,40px); line-height:1.24; letter-spacing:-0.04em; font-weight:800; text-wrap:balance">그동안 망설일 수 밖에 없었던 이유</h2>
+      </div>
+      <sc-if value="{{ r.desk }}" hint-placeholder-val="{{ true }}">
+      <div style="margin:21px 0 0; width:100vw; margin-left:calc(50% - 50vw); overflow:hidden; padding:24px 0 44px">
+        <div style="display:flex; flex-direction:column; gap:14px">
+        <div style="display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; gap:14px; transform:translateX(137px)">
+          <div aria-hidden="true" style="flex:none; width:250px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.2s ease-in-out 0.0s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:290px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.6s ease-in-out -1.2s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:230px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.7s ease-in-out -2.4s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:310px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 6.1s ease-in-out -3.6s infinite"></div>
+          <div style="position:relative; z-index:{{ pf0.z }}; flex:none; padding:18px 30px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf0.shadow }}; transform:{{ pf0.scale }}; filter:{{ pf0.blur }}; opacity:{{ pf0.op }}; animation:{{ pf0.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:clamp(16px,1.6vw,19px); font-weight:700; letter-spacing:-0.02em; color:#2b3f36; white-space:nowrap">어디서 비교해야 할 지 모르겠어요</div>
+          <div aria-hidden="true" style="flex:none; width:300px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.2s ease-in-out -0.7s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:240px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.3s ease-in-out -1.9s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:280px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.7s ease-in-out -3.1s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:250px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.8s ease-in-out -0.2s infinite"></div>
+        </div>
+        <div style="display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; gap:14px">
+          <div aria-hidden="true" style="flex:none; width:260px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.9s ease-in-out -2.8s infinite"></div>
+          <div style="position:relative; z-index:{{ pf1.z }}; flex:none; padding:18px 30px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf1.shadow }}; transform:{{ pf1.scale }}; filter:{{ pf1.blur }}; opacity:{{ pf1.op }}; animation:{{ pf1.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:clamp(16px,1.6vw,19px); font-weight:700; letter-spacing:-0.02em; color:#2b3f36; white-space:nowrap">{{ pq1 }}</div>
+          <div style="position:relative; z-index:{{ pf2.z }}; flex:none; padding:18px 30px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf2.shadow }}; transform:{{ pf2.scale }}; filter:{{ pf2.blur }}; opacity:{{ pf2.op }}; animation:{{ pf2.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:clamp(16px,1.6vw,19px); font-weight:700; letter-spacing:-0.02em; color:#2b3f36; white-space:nowrap">{{ pq2 }}</div>
+          <div style="position:relative; z-index:{{ pf3.z }}; flex:none; padding:18px 30px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf3.shadow }}; transform:{{ pf3.scale }}; filter:{{ pf3.blur }}; opacity:{{ pf3.op }}; animation:{{ pf3.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:clamp(16px,1.6vw,19px); font-weight:700; letter-spacing:-0.02em; color:#2b3f36; white-space:nowrap">{{ pq3 }}</div>
+          <div aria-hidden="true" style="flex:none; width:260px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.0s ease-in-out -4.0s infinite"></div>
+        </div>
+        <div style="display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; gap:14px; transform:translateX(137px)">
+          <div aria-hidden="true" style="flex:none; width:250px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 6.2s ease-in-out -1.4s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:280px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.3s ease-in-out -2.6s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:240px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.4s ease-in-out -3.8s infinite"></div>
+          <div style="position:relative; z-index:{{ pf4.z }}; flex:none; padding:18px 30px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf4.shadow }}; transform:{{ pf4.scale }}; filter:{{ pf4.blur }}; opacity:{{ pf4.op }}; animation:{{ pf4.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:clamp(16px,1.6vw,19px); font-weight:700; letter-spacing:-0.02em; color:#2b3f36; white-space:nowrap">약속대로 현금을 다 주지 않을 것 같아서 망설여져요</div>
+          <div aria-hidden="true" style="flex:none; width:260px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.8s ease-in-out -0.9s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:310px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.9s ease-in-out -2.1s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:230px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 6.3s ease-in-out -3.3s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:290px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 5.4s ease-in-out -0.4s infinite"></div>
+          <div aria-hidden="true" style="flex:none; width:250px; height:59px; border-radius:16px; background:#fbfbfb; box-shadow:0 1px 4px rgba(20,37,29,0.05); filter:blur(5px); opacity:0.62; animation:ngFloatSoft 4.5s ease-in-out -1.6s infinite"></div>
+        </div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ r.mob }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:21px 0 0; padding:20px 0 34px; display:flex; flex-direction:column; align-items:center; gap:14px">
+          <div style="position:relative; z-index:{{ pf0.z }}; max-width:88%; margin-left:-28px; padding:15px 22px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf0.shadow }}; transform:{{ pf0.scale }}; filter:{{ pf0.blur }}; opacity:{{ pf0.op }}; animation:{{ pf0.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:15.5px; font-weight:700; letter-spacing:-0.02em; color:#2b3f36; text-align:center; text-wrap:balance">어디서 비교해야 할 지 모르겠어요</div>
+          <div style="position:relative; z-index:{{ pf1.z }}; max-width:88%; margin-left:34px; padding:15px 22px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf1.shadow }}; transform:{{ pf1.scale }}; filter:{{ pf1.blur }}; opacity:{{ pf1.op }}; animation:{{ pf1.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:15.5px; font-weight:700; letter-spacing:-0.02em; color:#2b3f36; text-align:center; text-wrap:balance">{{ pq1 }}</div>
+          <div style="position:relative; z-index:{{ pf2.z }}; max-width:88%; margin-left:-22px; padding:15px 22px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf2.shadow }}; transform:{{ pf2.scale }}; filter:{{ pf2.blur }}; opacity:{{ pf2.op }}; animation:{{ pf2.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:15.5px; font-weight:700; letter-spacing:-0.02em; color:#2b3f36; text-align:center; text-wrap:balance">{{ pq2 }}</div>
+          <div style="position:relative; z-index:{{ pf3.z }}; max-width:88%; margin-left:30px; padding:15px 22px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf3.shadow }}; transform:{{ pf3.scale }}; filter:{{ pf3.blur }}; opacity:{{ pf3.op }}; animation:{{ pf3.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:15.5px; font-weight:700; letter-spacing:-0.02em; color:#2b3f36; text-align:center; text-wrap:balance">{{ pq3 }}</div>
+          <div style="position:relative; z-index:{{ pf4.z }}; max-width:88%; margin-left:0px; padding:15px 22px; border-radius:16px; background:#f5f5f5; box-shadow:{{ pf4.shadow }}; transform:{{ pf4.scale }}; filter:{{ pf4.blur }}; opacity:{{ pf4.op }}; animation:{{ pf4.anim }}; transition:transform 0.9s cubic-bezier(.22,.8,.3,1), filter 0.9s ease, opacity 0.9s ease, box-shadow 0.9s ease; font-size:15.5px; font-weight:700; letter-spacing:-0.02em; color:#2b3f36; text-align:center; text-wrap:balance">약속대로 현금을 다 주지 않을 것 같아서 망설여져요</div>
+        </div>
+      </sc-if>
+      <div aria-hidden="true" style="margin:48px auto 0; display:flex; flex-direction:column; align-items:center; gap:16px">
+        <div style="width:6px; height:6px; border-radius:50%; background:#12855b; opacity:0.25"></div>
+        <div style="width:7px; height:7px; border-radius:50%; background:#12855b; opacity:0.5"></div>
+        <div style="width:8px; height:8px; border-radius:50%; background:#12855b; opacity:0.65"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" style="padding:72px 20px 0">
+    <div style="max-width:1080px; margin:0 auto; color:#14251d">
+      <div style="max-width:520px; margin:0 auto; text-align:center">
+        <div style="font-size:13.5px; font-weight:800; color:#12855b">넷고를 써야만 하는 이유</div>
+        <h2 style="margin:12px 0 0; font-size:clamp(26px,3.6vw,38px); line-height:1.24; letter-spacing:-0.04em; font-weight:800">100% 만족하실 거예요!</h2>
+      </div>
+      <div style="position:relative; isolation:isolate; margin:53px auto 0; max-width:930px; display:grid; grid-template-columns:{{ r.whyCols }}; align-items:start; gap:{{ r.whyGap }}">
+        <div aria-hidden="true" style="position:absolute; z-index:-1; left:4%; top:8%; width:34%; height:78%; border-radius:50%; background:radial-gradient(circle, rgba(63,199,140,0.42) 0%, rgba(63,199,140,0) 70%); filter:blur(28px); pointer-events:none"></div>
+        <div aria-hidden="true" style="position:absolute; z-index:-1; left:38%; top:-6%; width:30%; height:70%; border-radius:50%; background:radial-gradient(circle, rgba(143,214,190,0.5) 0%, rgba(143,214,190,0) 70%); filter:blur(30px); pointer-events:none"></div>
+        <div aria-hidden="true" style="position:absolute; z-index:-1; right:2%; top:20%; width:36%; height:80%; border-radius:50%; background:radial-gradient(circle, rgba(18,133,91,0.32) 0%, rgba(18,133,91,0) 70%); filter:blur(32px); pointer-events:none"></div>
+        <sc-for list="{{ appealGrid }}" as="a" hint-placeholder-count="4">
+          <div style="grid-column:{{ a.col }}; grid-row:{{ a.row }}; margin-top:{{ a.offset }}; aspect-ratio:{{ r.whyRatio }}; min-height:{{ r.whyMinH }}; transition:transform 0.35s cubic-bezier(.22,.8,.3,1), box-shadow 0.35s ease; cursor:default; padding:{{ r.whyPad }}; border-radius:26px; border:1px solid rgba(255,255,255,0.75); background:linear-gradient(160deg, rgba(255,255,255,0.62) 0%, rgba(236,248,241,0.38) 45%, rgba(220,242,230,0.3) 100%); backdrop-filter:blur(26px) saturate(180%); -webkit-backdrop-filter:blur(26px) saturate(180%); color:#14251d; position:relative; box-shadow:inset 0 1px 0 rgba(255,255,255,0.95), inset 1px 0 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(18,133,91,0.08), inset 0 0 0 1px rgba(18,133,91,0.06); display:flex; flex-direction:column; justify-content:flex-start" style-hover="transform:scale(1.07); z-index:2; box-shadow:inset 0 1px 0 rgba(255,255,255,0.95), inset 1px 0 0 rgba(255,255,255,0.6), 0 18px 40px rgba(18,133,91,0.16)">
+            
+            <sc-if value="{{ a.filled }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:13px; font-weight:800; letter-spacing:0.02em; color:#12855b; line-height:1">{{ a.no }}</div>
+              <div style="margin-top:9px; font-size:clamp(14.4px,1.6vw,18.4px); font-weight:700; letter-spacing:-0.03em; line-height:1.3; white-space:pre-line">{{ a.title }}</div>
+              <div style="margin-top:auto; font-size:12.5px; line-height:1.6; color:#4e6259; text-wrap:pretty; white-space:normal">{{ a.body }}</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin:67px auto 0; max-width:930px; display:flex; flex-direction:column; gap:10px">
+      <div style="margin:0 24px; padding-top:14px; border-top:1px solid #dbe8e1; font-size:17.6px; font-weight:800; letter-spacing:-0.02em; color:#12855b; line-height:1; text-align:{{ r.revAlign }}">REVIEW</div>
+      <div style="min-width:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:8px">
+      <div style="padding:26px 24px 20px; text-align:{{ r.revAlign }}">
+        <div style="font-size:16px; font-weight:600; line-height:1.66; text-wrap:pretty">“쓰던 요금제보다 월 9천원 내려가고 현금 혜택까지 받았어요. 덕분에 간편하게 인터넷 가입할 수 있었네요.”</div>
+        <div style="margin-top:12px; font-size:13px; color:#8aa197">김O현 · 신규 가입</div>
+      </div>
+      <div style="padding:26px 24px 20px; text-align:{{ r.revAlign }}">
+        <div style="font-size:16px; font-weight:600; line-height:1.66; text-wrap:pretty">“제가 인터넷을 쓰는 환경에 딱 적절한 상품으로 추천해줘서 부담없는 요금제로 만족하면서 인터넷 사용하고 있어요!”</div>
+        <div style="margin-top:12px; font-size:13px; color:#8aa197">최0이 · 20대 · 신규 가입</div>
+      </div>
+      <div style="padding:26px 24px 20px; text-align:{{ r.revAlign }}">
+        <div style="font-size:16px; font-weight:600; line-height:1.66; text-wrap:pretty">“현금을 정말 최대로 돌려주더라고요. 덕분에 모르고 못 받았을 수도 있던 돈, 잘 챙길 수 있었습니다.”</div>
+        <div style="margin-top:12px; font-size:13px; color:#8aa197">김0형 · 30대 · 결합</div>
+      </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products" style="padding:72px 20px 0">
+    <div style="max-width:1080px; margin:0 auto">
+      <div style="text-align:center; max-width:520px; margin:0 auto">
+        <div style="font-size:13.5px; font-weight:800; color:#12855b">상품 안내</div>
+        <h2 style="margin:12px 0 0; font-size:clamp(26px,3.6vw,40px); line-height:1.24; letter-spacing:-0.04em; font-weight:800">쓰는 만큼만 골라요</h2>
+        <p style="margin:12px auto 0; max-width:{{ r.prodDescW }}; font-size:{{ r.descFs }}; line-height:1.68; color:#4e6259; text-wrap:balance">약정 기간과 상품에 따라 금액은 상이하며, 상담을 통해 확정 금액을 알려드려요.</p>
+      </div>
+      <div style="margin:32px auto 0; max-width:810px; display:grid; gap:16px">
+        <sc-for list="{{ planRows }}" as="row" hint-placeholder-count="2">
+        <div style="padding:12px; border-radius:34px; background:#fff; box-shadow:0 20px 60px rgba(150,150,150,0.28); display:grid; grid-template-columns:{{ r.planCols }}; gap:12px">
+        <sc-for list="{{ row }}" as="pl" hint-placeholder-count="2">
+          <div style="position:relative; padding:28px 24px 24px; border-radius:24px; margin:{{ pl.margin }}; background:{{ pl.bg }}; box-shadow:{{ pl.shadow }}; color:{{ pl.fg }}; display:flex; flex-direction:column">
+            <sc-if value="{{ pl.badge }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:20px; right:20px; padding:6px 12px; border-radius:99px; background:#dcebc8; color:#14251d; font-size:11.5px; font-weight:800">{{ pl.badge }}</div>
+            </sc-if>
+            <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 12px">
+              <div style="font-size:17.5px; font-weight:800; letter-spacing:-0.02em">{{ pl.name }}</div>
+              <div style="flex:none; font-size:13px; font-weight:700; color:{{ pl.cashFg }}">{{ pl.cashLabel }} {{ pl.cash }}</div>
+            </div>
+            <div style="margin-top:20px; display:flex; align-items:baseline; gap:5px">
+              <span style="font-size:32px; font-weight:800; letter-spacing:-0.04em">{{ pl.price }}</span>
+              <span style="font-size:13.5px; opacity:0.7">원/월</span>
+            </div>
+            <sc-if value="{{ showPlanItems }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px; margin-bottom:22px; display:grid; gap:9px; font-size:14px">
+              <sc-for list="{{ pl.items }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex; gap:9px; align-items:flex-start"><span style="flex:none; opacity:0.55; font-size:12.5px; margin-top:2px">✓</span><span style="line-height:1.5">{{ it }}</span></div>
+              </sc-for>
+            </div>
+            </sc-if>
+            <div aria-hidden="true" style="margin:{{ pl.iconMargin }}; display:flex; justify-content:center; align-items:flex-end; gap:{{ pl.iconGap }}; zoom:{{ pl.iconZoom }}">
+              <sc-if value="{{ pl.hasPhone }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 56 92" width="52" height="86" style="display:block; overflow:visible; transform:{{ pl.fxPhone }}">
+                <defs>
+                  <linearGradient id="ngPhFrame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f7ec"></stop><stop offset="1" stop-color="#8fd3b4"></stop></linearGradient>
+                  <linearGradient id="ngPhScreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd0ad"></stop><stop offset="0.6" stop-color="#4fae86"></stop><stop offset="1" stop-color="#9b8cec"></stop></linearGradient>
+                  <radialGradient id="ngPhShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.2"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+                </defs>
+                <ellipse cx="28" cy="86" rx="24" ry="5" fill="url(#ngPhShadow)"></ellipse>
+                <rect x="6" y="6" width="44" height="78" rx="12" fill="#55ab86"></rect>
+                <rect x="6" y="3" width="44" height="78" rx="12" fill="url(#ngPhFrame)"></rect>
+                <rect x="6.5" y="3.5" width="43" height="77" rx="11.5" fill="none" stroke="#ffffff" stroke-opacity="0.7"></rect>
+                <rect x="10.5" y="8" width="35" height="68" rx="8" fill="url(#ngPhScreen)"></rect>
+                <rect x="21" y="11" width="14" height="4" rx="2" fill="#2f7d5c" opacity="0.55"></rect>
+                <path d="M14 20 L32 20 L14 50 Z" fill="#ffffff" opacity="0.22"></path>
+                <rect x="14" y="18" width="16" height="1.8" rx="0.9" fill="#ffffff" opacity="0.7"></rect>
+                <rect x="22" y="70.5" width="12" height="2" rx="1" fill="#ffffff" opacity="0.8"></rect>
+              </svg>
+              </sc-if>
+              <sc-if value="{{ pl.tvLeft }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 96 92" width="90" height="86" style="display:block; overflow:visible">
+                <defs>
+                  <linearGradient id="ngTvFrame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f7ec"></stop><stop offset="1" stop-color="#8fd3b4"></stop></linearGradient>
+                  <linearGradient id="ngTvScreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd0ad"></stop><stop offset="0.6" stop-color="#4fae86"></stop><stop offset="1" stop-color="#9b8cec"></stop></linearGradient>
+                  <linearGradient id="ngTvBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9d4"></stop><stop offset="1" stop-color="#6fbf9b"></stop></linearGradient>
+                  <radialGradient id="ngTvShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.2"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+                </defs>
+                <ellipse cx="48" cy="86" rx="36" ry="5.5" fill="url(#ngTvShadow)"></ellipse>
+                <rect x="44" y="60" width="8" height="18" rx="4" fill="#7cc7a6"></rect>
+                <rect x="30" y="76" width="36" height="8" rx="4" fill="url(#ngTvBase)"></rect>
+                <rect x="31" y="76.6" width="34" height="2" rx="1" fill="#ffffff" opacity="0.6"></rect>
+                <rect x="6" y="6" width="84" height="56" rx="10" fill="#55ab86"></rect>
+                <rect x="6" y="4" width="84" height="56" rx="10" fill="url(#ngTvFrame)"></rect>
+                <rect x="6.5" y="4.5" width="83" height="55" rx="9.5" fill="none" stroke="#ffffff" stroke-opacity="0.7"></rect>
+                <rect x="12" y="10" width="72" height="42" rx="6" fill="url(#ngTvScreen)"></rect>
+                <path d="M16 14 L46 14 L22 46 L16 46 Z" fill="#ffffff" opacity="0.22"></path>
+                <rect x="16" y="13" width="40" height="2" rx="1" fill="#ffffff" opacity="0.7"></rect>
+                <circle cx="48" cy="56.3" r="1.5" fill="#ffffff" opacity="0.9"></circle>
+              </svg>
+              </sc-if>
+              <sc-if value="{{ pl.hasDeskPhone }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 100 104" width="93" height="97" style="display:block; overflow:visible">
+                <defs>
+                  <linearGradient id="ngDpTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0fbf5"></stop><stop offset="1" stop-color="#bfe9d4"></stop></linearGradient>
+                  <linearGradient id="ngDpFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcbf"></stop><stop offset="1" stop-color="#74c6a2"></stop></linearGradient>
+                  <linearGradient id="ngDpSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fbf9b"></stop><stop offset="1" stop-color="#55ab86"></stop></linearGradient>
+                  <linearGradient id="ngDpHand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f7ec"></stop><stop offset="1" stop-color="#9fdcbf"></stop></linearGradient>
+                  <radialGradient id="ngDpShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.2"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+                </defs>
+                <ellipse cx="50" cy="94" rx="44" ry="8" fill="url(#ngDpShadow)"></ellipse>
+                <path d="M10 56 L56.8 83 L56.8 95 L10 68 Z" fill="url(#ngDpFront)" stroke="url(#ngDpFront)" stroke-width="5" stroke-linejoin="round"></path>
+                <path d="M56.8 83 L86.2 56 L86.2 78 L56.8 95 Z" fill="url(#ngDpSide)" stroke="url(#ngDpSide)" stroke-width="5" stroke-linejoin="round"></path>
+                <path d="M10 56 L56.8 83 L86.2 56 L39.4 29 Z" fill="url(#ngDpTop)" stroke="url(#ngDpTop)" stroke-width="5" stroke-linejoin="round"></path>
+                <path d="M15 58 L54 80.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"></path>
+                <path d="M55.8 50.15 L69.7 58.15 L74 54.2 L60.1 46.2 Z" fill="#c9bdf7" stroke="#c9bdf7" stroke-width="1.6" stroke-linejoin="round"></path>
+                <ellipse cx="39.4" cy="62.65" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="46.3" cy="66.65" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="53.2" cy="70.65" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="46.3" cy="56.3" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="53.2" cy="60.3" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="60.1" cy="64.3" rx="2.6" ry="1.5" fill="#ffffff"></ellipse>
+                <ellipse cx="53.2" cy="49.94" rx="2.6" ry="1.5" fill="#ffffff" opacity="0.85"></ellipse>
+                <ellipse cx="60.1" cy="53.94" rx="2.6" ry="1.5" fill="#ffffff" opacity="0.85"></ellipse>
+                <ellipse cx="67" cy="57.94" rx="2.6" ry="1.5" fill="#9b8cec"></ellipse>
+                <path d="M16 62 q-4 2.5 -0.5 5 q3.5 2.5 -0.5 5 q-4 2.5 -0.5 5" fill="none" stroke="#6fbf9b" stroke-width="2.2" stroke-linecap="round"></path>
+                <path d="M23 54.5 L43.8 35.5" stroke="#55ab86" stroke-width="11" stroke-linecap="round"></path>
+                <path d="M23 50.5 L43.8 31.5" stroke="url(#ngDpHand)" stroke-width="10" stroke-linecap="round"></path>
+                <circle cx="22" cy="51.5" r="7" fill="url(#ngDpHand)"></circle>
+                <circle cx="44.8" cy="31" r="7" fill="url(#ngDpHand)"></circle>
+                <path d="M19 47.5 L41 27.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"></path>
+              </svg>
+              </sc-if>
+              <svg viewBox="0 0 120 114" width="112" height="106" style="display:block; overflow:visible; transform:{{ pl.fxRouter }}">
+                <defs>
+                  <linearGradient id="ngTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0fbf5"></stop><stop offset="1" stop-color="#bfe9d4"></stop></linearGradient>
+                  <linearGradient id="ngFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcbf"></stop><stop offset="1" stop-color="#74c6a2"></stop></linearGradient>
+                  <linearGradient id="ngSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fbf9b"></stop><stop offset="1" stop-color="#55ab86"></stop></linearGradient>
+                  <linearGradient id="ngAnt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6f3e5"></stop><stop offset="1" stop-color="#7cc7a6"></stop></linearGradient>
+                  <linearGradient id="ngWave" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9a8f5"></stop><stop offset="1" stop-color="#7fd8b0"></stop></linearGradient>
+                  <radialGradient id="ngShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.2"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+                </defs>
+                <ellipse cx="60" cy="100" rx="50" ry="10" fill="url(#ngShadow)"></ellipse>
+                <path d="M20 58 L75.4 90 L75.4 106 L20 74 Z" fill="url(#ngFront)" stroke="url(#ngFront)" stroke-width="6" stroke-linejoin="round"></path>
+                <path d="M75.4 90 L97.9 77 L97.9 93 L75.4 106 Z" fill="url(#ngSide)" stroke="url(#ngSide)" stroke-width="6" stroke-linejoin="round"></path>
+                <path d="M20 58 L75.4 90 L97.9 77 L42.5 45 Z" fill="url(#ngTop)" stroke="url(#ngTop)" stroke-width="6" stroke-linejoin="round"></path>
+                <path d="M26 58.5 L72 85" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="0.8"></path>
+                <ellipse cx="46.9" cy="55.3" rx="5.6" ry="3" fill="#8fd3b4"></ellipse>
+                <rect x="42.9" y="25.3" width="8" height="30" rx="4" fill="url(#ngAnt)"></rect>
+                <ellipse cx="80" cy="74.5" rx="5.6" ry="3" fill="#8fd3b4"></ellipse>
+                <rect x="76" y="44.5" width="8" height="30" rx="4" fill="url(#ngAnt)"></rect>
+                <path d="M56.4 33 A15 15 0 0 1 80.4 33" fill="none" stroke="url(#ngWave)" stroke-width="5" stroke-linecap="round" opacity="0.55"></path>
+                <path d="M61.2 36.6 A9 9 0 0 1 75.6 36.6" fill="none" stroke="url(#ngWave)" stroke-width="5" stroke-linecap="round" opacity="0.85"></path>
+                <circle cx="68.4" cy="42" r="3.2" fill="#9b8cec"></circle>
+                <circle cx="35.5" cy="75.5" r="2.6" fill="#ffffff"></circle>
+                <circle cx="43" cy="79.8" r="2.6" fill="#ffffff" opacity="0.85"></circle>
+                <circle cx="50.5" cy="84.1" r="2.6" fill="#c9bdf7"></circle>
+                <path d="M60 89.5 L69 94.7" stroke="#4ea882" stroke-width="3.4" stroke-linecap="round" opacity="0.5"></path>
+              </svg>
+              <sc-if value="{{ pl.tvRight }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 96 92" width="81" height="77" style="display:block; overflow:visible; transform:{{ pl.fxTv }}">
+                <defs>
+                  <linearGradient id="ngTvFrame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f7ec"></stop><stop offset="1" stop-color="#8fd3b4"></stop></linearGradient>
+                  <linearGradient id="ngTvScreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd0ad"></stop><stop offset="0.6" stop-color="#4fae86"></stop><stop offset="1" stop-color="#9b8cec"></stop></linearGradient>
+                  <linearGradient id="ngTvBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9d4"></stop><stop offset="1" stop-color="#6fbf9b"></stop></linearGradient>
+                  <radialGradient id="ngTvShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.2"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+                </defs>
+                <ellipse cx="48" cy="86" rx="36" ry="5.5" fill="url(#ngTvShadow)"></ellipse>
+                <rect x="44" y="60" width="8" height="18" rx="4" fill="#7cc7a6"></rect>
+                <rect x="30" y="76" width="36" height="8" rx="4" fill="url(#ngTvBase)"></rect>
+                <rect x="31" y="76.6" width="34" height="2" rx="1" fill="#ffffff" opacity="0.6"></rect>
+                <rect x="6" y="6" width="84" height="56" rx="10" fill="#55ab86"></rect>
+                <rect x="6" y="4" width="84" height="56" rx="10" fill="url(#ngTvFrame)"></rect>
+                <rect x="6.5" y="4.5" width="83" height="55" rx="9.5" fill="none" stroke="#ffffff" stroke-opacity="0.7"></rect>
+                <rect x="12" y="10" width="72" height="42" rx="6" fill="url(#ngTvScreen)"></rect>
+                <path d="M16 14 L46 14 L22 46 L16 46 Z" fill="#ffffff" opacity="0.22"></path>
+                <rect x="16" y="13" width="40" height="2" rx="1" fill="#ffffff" opacity="0.7"></rect>
+                <circle cx="48" cy="56.3" r="1.5" fill="#ffffff" opacity="0.9"></circle>
+              </svg>
+              </sc-if>
+            </div>
+            <a href="#apply" style="margin-top:auto; display:block; text-align:center; padding:14px; border-radius:16px; transition:transform 0.25s cubic-bezier(.22,.8,.3,1); background:{{ pl.btnBg }}; color:{{ pl.btnFg }}; font-size:14.5px; font-weight:700" style-hover="transform:scale(1.04)">이 구성으로 상담</a>
+          </div>
+        </sc-for>
+        </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <div style="background:#ffffff">
+  <section id="how" style="padding:72px 20px 0">
+    <div style="max-width:1080px; margin:0 auto">
+      <div style="text-align:center; max-width:520px; margin:0 auto">
+        <div style="font-size:13.5px; font-weight:800; color:#12855b">신청 방법</div>
+        <h2 style="margin:12px 0 0; font-size:clamp(26px,3.6vw,40px); line-height:1.24; letter-spacing:-0.04em; font-weight:800">가장 간편한 방법으로 진행되는</h2>
+      </div>
+      <div style="margin:{{ r.stepsMargin }}; max-width:392px; position:relative; display:grid; gap:27px; padding-left:{{ r.stepsPad }}; border-left:2px dashed #d4d4d4">
+        <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+          <div style="position:relative; padding:26px 22px; border-radius:26px; background:rgba(255,255,255,0.6)">
+            <div style="position:absolute; left:{{ r.dotLeft }}; top:26px; width:20px; height:20px; border-radius:50%; background:{{ st.dot }}; border:4px solid #ffffff; box-shadow:{{ st.glow }}; transition:background 1.4s ease-in-out, box-shadow 1.4s ease-in-out"></div>
+            <div style="opacity:{{ st.op }}; transform:{{ st.scale }}; transform-origin:left center; transition:opacity 0.8s ease, transform 0.8s cubic-bezier(.22,.8,.3,1)">
+            <div style="display:flex; align-items:center; gap:10px">
+              <div style="font-size:13px; font-weight:800; letter-spacing:0.06em; color:#12855b">STEP {{ st.no }}</div>
+              <div style="margin-left:auto; display:flex; align-items:center; gap:5px; font-size:12.5px; font-weight:400; color:#8aa197">
+                <sc-if value="{{ st.clock }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="display:block">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7.4V12l3.2 2"></path>
+                </svg></sc-if>
+                <span>{{ st.time }}</span>
+              </div>
+            </div>
+            <div style="margin-top:14px; font-size:16.5px; font-weight:800; letter-spacing:-0.02em">{{ st.title }}</div>
+            <div style="margin-top:8px; font-size:14px; line-height:1.66; color:#4e6259; text-wrap:pretty; white-space:pre-line">{{ st.body }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="apply" style="padding:72px 20px 72px">
+    <div style="max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:16px; align-items:start">
+      <div style="align-self:stretch; display:flex; flex-direction:column; padding:{{ r.applyPad }}; text-align:{{ r.applyAlign }}">
+        <div style="font-size:13.5px; font-weight:800; color:#12855b">신청하기</div>
+        <h2 style="margin:12px 0 0; font-size:clamp(25px,3.4vw,36px); line-height:1.22; letter-spacing:-0.04em; font-weight:800">내가 받을 수 있는<br />숨겨진 혜택을</h2>
+        <div style="margin-top:22px; font-size:14.5px; line-height:1.7; color:#2b3f36">
+          <div style="white-space:nowrap">상품은 필요한 만큼만, 혜택은 풍성하게!</div>
+        </div>
+        <sc-if value="{{ r.desk }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:auto; padding:56px 0 0">
+          <div style="font-size:13px; font-weight:700; color:#8aa197">바로 문의</div>
+          <div style="margin-top:6px; font-size:25px; font-weight:800; letter-spacing:-0.03em; color:#4e6259">070-4647-1124</div>
+          <div style="margin-top:4px; font-size:13px; color:#8aa197">평일 10:00 - 19:00</div>
+        </div>
+        </sc-if>
+      </div>
+
+      <div style="position:relative; left:{{ r.formShift }}; padding:{{ r.formPad }}; border-radius:29px; background:#fff; box-shadow:0 18px 40px rgba(15,70,50,0.10)">
+        <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="10" fill="#12855b"></circle><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <div style="font-size:18.5px; font-weight:800; letter-spacing:-0.02em">신청 완료</div>
+            </div>
+            <div style="margin-top:20px; padding:4px 18px; border-radius:16px; background:#f7f7f7">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:15px 0; border-bottom:1px solid #eeeeee">
+                <span style="flex:none; font-size:13.5px; font-weight:700; color:#8aa197">성함</span>
+                <span style="font-size:14.5px; font-weight:700; color:#14251d; text-align:right">{{ form.name }}</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:15px 0; border-bottom:1px solid #eeeeee">
+                <span style="flex:none; font-size:13.5px; font-weight:700; color:#8aa197">연락처</span>
+                <span style="font-size:14.5px; font-weight:700; color:#14251d; text-align:right">{{ form.phone }}</span>
+              </div>
+              <sc-if value="{{ hasCarrier }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:15px 0; border-bottom:1px solid #eeeeee">
+                  <span style="flex:none; font-size:13.5px; font-weight:700; color:#8aa197">통신사</span>
+                  <span style="font-size:14.5px; font-weight:700; color:#14251d; text-align:right">{{ form.carrier }}</span>
+                </div>
+              </sc-if>
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:15px 0">
+                <span style="flex:none; font-size:13.5px; font-weight:700; color:#8aa197">희망 상품</span>
+                <span style="font-size:14.5px; font-weight:700; color:#14251d; text-align:right; line-height:1.6; white-space:pre-line">{{ productSummary }}</span>
+              </div>
+            </div>
+            <div style="margin-top:14px; font-size:12.2px; line-height:1.6; color:#8aa197; text-align:center">개인정보 수집·이용 동의 완료</div>
+            <button type="button" disabled="{{ true }}" style="margin-top:20px; width:100%; padding:17px; border-radius:14px; border:none; background:#e3e3e3; color:#555555; font-size:16px; font-weight:800; cursor:default">곧 전화가 갈 거예요!</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-size:18.5px; font-weight:800; letter-spacing:-0.02em; text-align:center">상담 신청</div>
+            <div style="margin-top:20px; display:grid; gap:15px">
+              <label style="display:block">
+                <span style="font-size:13.5px; font-weight:700; color:{{ inv.nameLabel }}">성함 <span style="color:#d93b30">*</span></span>
+                <div style="position:relative; margin-top:7px"><input type="text" value="{{ form.name }}" onChange="{{ onName }}" onFocus="{{ focus_name }}" onBlur="{{ blurField }}" placeholder="성함을 입력해 주세요." style="width:100%; padding:15px 42px 15px 16px; border-radius:16px; border:none; background:{{ inv.nameBg }}; box-shadow:{{ inv.nameRing }}; font-size:12.4px; outline:none" style-focus="box-shadow:inset 0 0 0 1.5px #555555; background:#ffffff" /><sc-if value="{{ inv.nameOk }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); display:block; pointer-events:none"><circle cx="12" cy="12" r="10" fill="#12855b"></circle><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if></div>
+              </label>
+              <label style="display:block">
+                <span style="font-size:13.5px; font-weight:700; color:{{ inv.phoneLabel }}">연락처 <span style="color:#d93b30">*</span></span>
+                <div style="position:relative; margin-top:7px"><input type="tel" value="{{ form.phone }}" onChange="{{ onPhone }}" onFocus="{{ focus_phone }}" onBlur="{{ blurField }}" placeholder="- 없이 입력해 주세요." style="width:100%; padding:15px 42px 15px 16px; border-radius:16px; border:none; background:{{ inv.phoneBg }}; box-shadow:{{ inv.phoneRing }}; font-size:12.4px; outline:none" style-focus="box-shadow:inset 0 0 0 1.5px #555555; background:#ffffff" /><sc-if value="{{ inv.phoneOk }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); display:block; pointer-events:none"><circle cx="12" cy="12" r="10" fill="#12855b"></circle><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if></div>
+              </label>
+              <div>
+                <span style="font-size:13.5px; font-weight:700; color:{{ carrierLabel }}">통신사 선택 <span style="color:#d93b30">*</span></span>
+                <div style="margin-top:9px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px">
+                  <sc-for list="{{ carrierBoxes }}" as="cr" hint-placeholder-count="4">
+                    <div role="button" aria-label="{{ cr.label }}" aria-pressed="{{ cr.on }}" onClick="{{ cr.pick }}" style="cursor:pointer; padding:12px 6px 10px; border-radius:14px; background:#ffffff; box-shadow:{{ cr.ring }}; display:flex; flex-direction:column; align-items:center; gap:6px; transition:box-shadow 0.2s ease">
+                      <div style="width:100%; height:30px; display:flex; align-items:center; justify-content:center"><img src="{{ cr.img }}" alt="{{ cr.label }}" style="width:{{ cr.sz }}; height:{{ cr.sz }}; object-fit:contain; display:block" /></div>
+                      <span style="font-size:12px; font-weight:700; letter-spacing:-0.02em; color:{{ cr.textFg }}; white-space:nowrap">{{ cr.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <span style="font-size:13.5px; font-weight:700; color:{{ inv.prodLabel }}">희망 상품 <span style="color:#d93b30">*</span></span>
+                <div style="margin-top:9px; display:flex; flex-wrap:wrap; gap:8px">
+                  <sc-for list="{{ productChips }}" as="c" hint-placeholder-count="5">
+                    <button type="button" onClick="{{ c.toggle }}" style="flex:1 1 auto; text-align:center; padding:11px 16px; border-radius:12px; border:none; background:{{ c.bg }}; color:{{ c.fg }}; box-shadow:{{ inv.prodRing }}; font-size:14px; font-weight:700; cursor:pointer">{{ c.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <label style="margin-top:8px; display:flex; gap:10px; align-items:flex-start; cursor:pointer">
+                <input type="checkbox" checked="{{ form.agree }}" onChange="{{ onAgree }}" style="margin-top:4px; width:14px; height:14px; accent-color:#12855b" />
+                <span style="font-size:12.2px; line-height:1.6; color:{{ inv.agreeText }}">상담을 위한 개인정보 수집·이용에 동의합니다.<br />*상담 종료 후 3개월 보관</span>
+              </label>
+              <button type="button" onClick="{{ submit }}" style="padding:17px; border-radius:14px; border:none; background:{{ submitBg }}; color:{{ submitFg }}; font-size:16px; font-weight:800; cursor:pointer; transition:background 0.2s, color 0.2s">상담 신청하기</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ r.mob }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px 0 0; text-align:center">
+          <div style="font-size:13px; font-weight:700; color:#8aa197">바로 문의</div>
+          <div style="margin-top:6px; font-size:25px; font-weight:800; letter-spacing:-0.03em; color:#4e6259">070-4647-1124</div>
+          <div style="margin-top:4px; font-size:13px; color:#8aa197">평일 10:00 - 19:00</div>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section id="rental" style="padding:0 20px 72px">
+    <div style="max-width:1080px; margin:0 auto; padding:28px 36px; border-radius:24px; background:linear-gradient(120deg, #eef9f3 0%, #dcf2e7 55%, #e6eefc 100%); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px 32px">
+      <div style="min-width:0; flex:1 1 300px; padding-left:24px">
+        <div style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,255,255,0.72); box-shadow:0 2px 8px rgba(20,37,29,0.06); color:#0c6644; font-size:12.5px; font-weight:800; letter-spacing:-0.01em">가전 렌탈</div>
+        <div style="margin-top:12px; font-size:22px; font-weight:800; letter-spacing:-0.03em; line-height:1.4; color:#14251d; text-wrap:balance">우리집 가전 제품도 혜택 받아 렌탈하자!</div>
+      </div>
+      <div style="flex:none; display:flex; align-items:center; gap:28px">
+      <div aria-hidden="true" style="flex:none; display:flex; align-items:flex-end; gap:22px">
+        <svg viewBox="0 0 70 112" width="66" height="106" style="display:block; overflow:visible">
+          <defs>
+            <linearGradient id="ngWpBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"></stop><stop offset="0.7" stop-color="#f1f4f7"></stop><stop offset="1" stop-color="#dfe5ea"></stop></linearGradient>
+            <linearGradient id="ngWpSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd6dc"></stop><stop offset="1" stop-color="#b3bcc4"></stop></linearGradient>
+            <linearGradient id="ngWpNiche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e363d"></stop><stop offset="1" stop-color="#4b555e"></stop></linearGradient>
+            <radialGradient id="ngWpShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.22"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+          </defs>
+          <ellipse cx="36" cy="105" rx="30" ry="5" fill="url(#ngWpShadow)"></ellipse>
+          <path d="M52 9 l8 4.5 v84 a5 5 0 0 1 -2.6 4.4 l-5.4 2.6 z" fill="url(#ngWpSide)"></path>
+          <rect x="8" y="5" width="46" height="98" rx="11" fill="url(#ngWpBody)" stroke="#d3dae0" stroke-width="0.8"></rect>
+          <rect x="16" y="14" width="30" height="10" rx="5" fill="#eef2f5"></rect>
+          <circle cx="23" cy="19" r="3.4" fill="#b8c2ca"></circle>
+          <path d="M23 16.6v4.8M20.9 17.8l4.2 2.4M20.9 20.2l4.2-2.4" stroke="#ffffff" stroke-width="0.7" stroke-linecap="round"></path>
+          <circle cx="31" cy="19" r="3.4" fill="#b8c2ca"></circle>
+          <path d="M29.8 21.2c-.6-.9.6-1.5 0-2.4s.6-1.5 0-2.4M32.2 21.2c-.6-.9.6-1.5 0-2.4s.6-1.5 0-2.4" fill="none" stroke="#ffffff" stroke-width="0.7" stroke-linecap="round"></path>
+          <circle cx="39" cy="19" r="3.4" fill="#b8c2ca"></circle>
+          <rect x="15" y="32" width="32" height="52" rx="8" fill="url(#ngWpNiche)"></rect>
+          <rect x="26" y="32" width="10" height="8" rx="2.5" fill="#d7dde2"></rect>
+          <rect x="29.5" y="40" width="3" height="16" rx="1.5" fill="#8fd0ff" opacity="0.85"></rect>
+          <path d="M22.5 56 h17 l-2 20 a2 2 0 0 1 -2 1.8 h-9 a2 2 0 0 1 -2 -1.8 z" fill="#e8f4ff" opacity="0.35" stroke="#ffffff" stroke-opacity="0.8" stroke-width="1"></path>
+          <path d="M23.6 64 h14.8 l-1.1 11.8 a1.6 1.6 0 0 1 -1.6 1.4 h-9.4 a1.6 1.6 0 0 1 -1.6 -1.4 z" fill="#7cc6ff" opacity="0.8"></path>
+          <rect x="15" y="79" width="32" height="5" rx="2" fill="#9aa5ae"></rect>
+          <path d="M19 81.5 h24" stroke="#7d8891" stroke-width="0.8" stroke-dasharray="2 1.5"></path>
+        </svg>
+        <svg viewBox="0 0 112 110" width="112" height="110" style="display:block; overflow:visible">
+          <defs>
+            <linearGradient id="ngDwSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f8fa"></stop><stop offset="0.5" stop-color="#e2e7ec"></stop><stop offset="1" stop-color="#cdd4da"></stop></linearGradient>
+            <linearGradient id="ngDwSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3cbd2"></stop><stop offset="1" stop-color="#a9b3bb"></stop></linearGradient>
+            <linearGradient id="ngDwCav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3239"></stop><stop offset="1" stop-color="#434d56"></stop></linearGradient>
+            <linearGradient id="ngDwDoor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcc5cd"></stop><stop offset="1" stop-color="#e6ebef"></stop></linearGradient>
+            <radialGradient id="ngDwShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#14251d" stop-opacity="0.22"></stop><stop offset="1" stop-color="#14251d" stop-opacity="0"></stop></radialGradient>
+          </defs>
+          <ellipse cx="54" cy="104" rx="50" ry="5.5" fill="url(#ngDwShadow)"></ellipse>
+          <path d="M14 14 l10 -7 h76 l-10 7 z" fill="#eef2f5"></path>
+          <path d="M90 14 l10 -7 v70 l-10 7 z" fill="url(#ngDwSide)"></path>
+          <rect x="14" y="14" width="76" height="70" fill="url(#ngDwSteel)" stroke="#c9d1d8" stroke-width="0.8"></rect>
+          <rect x="14" y="14" width="76" height="12" fill="#dbe1e6"></rect>
+          <rect x="60" y="17" width="22" height="6" rx="1.5" fill="#1f2a33"></rect>
+          <rect x="63" y="19" width="6" height="2" rx="1" fill="#5fd3a0"></rect>
+          <rect x="71" y="19" width="8" height="2" rx="1" fill="#5fb8f0"></rect>
+          <circle cx="22" cy="20" r="2" fill="#9aa5ae"></circle>
+          <circle cx="29" cy="20" r="2" fill="#9aa5ae"></circle>
+          <circle cx="36" cy="20" r="2" fill="#12855b"></circle>
+          <rect x="19" y="29" width="66" height="53" rx="2" fill="url(#ngDwCav)"></rect>
+          <path d="M22 47 h60" stroke="#aab4bc" stroke-width="1.4"></path>
+          <path d="M26 39 h7 l-1 8 h-5 z" fill="#f4f7f9"></path>
+          <path d="M36 39 h7 l-1 8 h-5 z" fill="#e3e9ee"></path>
+          <path d="M47 41 a6 6 0 0 0 12 0 v-1 h-12 z" fill="#f4f7f9"></path>
+          <path d="M63 39 h7 l-1 8 h-5 z" fill="#f4f7f9"></path>
+          <path d="M22 76 h60" stroke="#aab4bc" stroke-width="1.4"></path>
+          <ellipse cx="29" cy="65" rx="2.6" ry="11" fill="#ffffff"></ellipse>
+          <ellipse cx="36" cy="65" rx="2.6" ry="11" fill="#f1f4f7"></ellipse>
+          <ellipse cx="43" cy="65" rx="2.6" ry="11" fill="#ffffff"></ellipse>
+          <ellipse cx="50" cy="65" rx="2.6" ry="11" fill="#e8edf1"></ellipse>
+          <path d="M58 70 a10 6 0 0 0 20 0 z" fill="#ffffff"></path>
+          <path d="M14 84 h76 l-16 11.2 h-76 z" fill="url(#ngDwDoor)" stroke="#c9d1d8" stroke-width="0.8"></path>
+          <path d="M-2 95.2 h76 v2.2 h-76 z" fill="#aeb8c0"></path>
+          <path d="M14 89.6 h66" stroke="#aab4bc" stroke-width="1" opacity="0.8" transform="translate(-4 0)"></path>
+          <rect x="18" y="97.6" width="36" height="2.8" rx="1.4" fill="#8d98a1"></rect>
+        </svg>
+      </div>
+      <a href="rental.html" aria-label="가전 렌탈 페이지로 이동" style="flex:none; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.72); box-shadow:0 2px 10px rgba(20,37,29,0.08); display:flex; align-items:center; justify-content:center; color:#14251d; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateX(3px); background:rgba(255,255,255,0.92)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="display:block"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer style="padding:36px 20px 33px; background:#12855b">
+    <div style="max-width:1080px; margin:0 auto; padding:12px 28px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:16px; font-size:13px; line-height:1.6; color:rgba(255,255,255,0.82)">
+      <div>
+        <div style="display:flex; align-items:center; gap:9px">
+          <img src="assets/netgo-logo-mark.png?v=2" alt="넷고" style="width:26px; height:26px; display:block; object-fit:contain" />
+          <span style="font-size:17px; font-weight:800; letter-spacing:-0.03em; color:#fff">넷고</span>
+        </div>
+      </div>
+      <div>상호 넷고 (NetGo)<br />사업자등록번호 558-29-01891<br />통신판매업신고 제2026-경기양주-1222호</div>
+      <div><a href="#apply" style="color:#fff; font-weight:700">상담 신청</a><br />070-4647-1124<br />평일 10:00–19:00</div>
+    </div>
+    <div style="max-width:1080px; margin:8px auto 0; padding:12px 28px 0; border-top:1px solid rgba(255,255,255,0.2); font-size:12px; color:rgba(255,255,255,0.66)">Copyright © NetGo. All rights reserved</div>
+  </footer>
+
+  <div style="position:fixed; right:18px; bottom:18px; z-index:60; display:flex; flex-direction:column; gap:10px">
+    <button type="button" onClick="{{ toTop }}" aria-label="맨 위로" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#ffffff; color:#14251d; box-shadow:0 6px 18px rgba(20,37,29,0.14), inset 0 0 0 1px rgba(20,37,29,0.08); display:flex; align-items:center; justify-content:center; transition:transform 0.2s ease" style-hover="transform:scale(1.06)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 15l6-6 6 6"></path></svg></button>
+    <button type="button" onClick="{{ openKakao }}" aria-label="카카오톡 채널 상담" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#FEE500; color:#191919; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.16)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,0.2)">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="display:block"><path fill="#191919" d="M12 3.6c-5 0-9 3.1-9 7 0 2.5 1.7 4.7 4.2 6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.3 0 .7.1 1 .1 5 0 9-3.1 9-7s-4-7.3-9-7.3z"></path></svg>
+    </button>
+    <button type="button" onClick="{{ openCall }}" aria-label="전화 상담 070-4647-1124" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#0c6644; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(12,102,68,0.34)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(12,102,68,0.42)">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="display:block"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"></path></svg>
+    </button>
+  </div>
+  <sc-if value="{{ kakaoOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeKakao }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="카카오톡 채널 QR" onClick="{{ stop }}" style="position:relative; width:100%; max-width:340px; border-radius:24px; overflow:hidden; background:#cdf1bb; box-shadow:0 24px 60px rgba(0,0,0,0.25)">
+        <button type="button" onClick="{{ closeKakao }}" aria-label="닫기" style="position:absolute; top:12px; right:12px; width:36px; height:36px; border:none; padding:0; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"></path></svg></button>
+        <img src="assets/kakao-qr.jpeg" alt="넷고 카카오톡 채널 QR 코드" style="display:block; width:100%; height:auto" />
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ callOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCall }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="전화 상담" onClick="{{ stop }}" style="width:100%; max-width:340px; padding:30px 26px 24px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25); text-align:center">
+        <div style="font-size:14px; font-weight:700; color:#8aa197">전화 상담</div>
+        <div style="margin-top:8px; font-size:28px; font-weight:800; letter-spacing:-0.03em; color:#14251d">070-4647-1124</div>
+        <div style="margin-top:6px; font-size:13px; color:#8aa197">평일 10:00 - 19:00</div>
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <button type="button" onClick="{{ closeCall }}" style="padding:15px; border:none; border-radius:14px; background:#f2f2f2; color:#3d3d3d; font-size:15px; font-weight:700; cursor:pointer">닫기</button>
+          <a href="tel:070-4647-1124" target="_top" style="display:flex; align-items:center; justify-content:center; text-align:center; padding:15px; border-radius:14px; background:#0c6644; color:#fff; font-size:15px; font-weight:700">전화 연결</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#12855b&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#12855b&quot;,&quot;#0c6644&quot;,&quot;#2fae74&quot;],&quot;section&quot;:&quot;브랜드&quot;},&quot;showStats&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;섹션&quot;},&quot;sheetUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycbxkJH1649bP4dellr0MbhcPM2IU9HmEn1eSCU1kXerOL3IzzdoCZo6t892AKEkc1p2Y/exec&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;구글시트 연결&quot;}}">
+class Component extends DCLogic {
+  state = { form: { name: "", phone: "", carrier: "", agree: false, products: [] }, error: "", submitted: false, submittedName: "", scrolled: false, invalid: {} };
+  set(k, v) { this.setState(s => ({ form: { ...s.form, [k]: v }, error: "", invalid: { ...s.invalid, [k]: false } })); }
+  toggle(l) { this.setState(s => ({ form: { ...s.form, products: s.form.products.includes(l) ? s.form.products.filter(p => p !== l) : [...s.form.products, l] }, invalid: { ...s.invalid, products: false } })); }
+
+  globeRef = React.createRef();
+
+  async drawGlobe() {
+    try {
+      const [geo, topo, land] = await Promise.all([
+        import("https://cdn.jsdelivr.net/npm/d3-geo@3/+esm"),
+        import("https://cdn.jsdelivr.net/npm/topojson-client@3/+esm"),
+        fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then(r => r.json())
+      ]);
+      const el = this.globeRef.current;
+      if (!el) return;
+      const S = 760, R = 372; let tilt = -18;
+      const landGeo = topo.feature(land, land.objects.land);
+      const pts = [];
+      for (let lat = -84; lat <= 84; lat += 1.7) {
+        const stepLon = 1.7 / Math.max(0.25, Math.cos(lat * Math.PI / 180));
+        for (let lon = -180; lon < 180; lon += stepLon) if (geo.geoContains(landGeo, [lon, lat])) pts.push([lon, lat]);
+      }
+      const hubList = [[127,37.5],[139.7,35.7],[121.5,31.2],[114.2,22.3],[103.8,1.35],[77.2,28.6],[151.2,-33.9],[55.3,25.2],[2.35,48.9],[-0.1,51.5],[13.4,52.5],[37.6,55.8],[-74,40.7],[-118.2,34],[-46.6,-23.5],[-99.1,19.4],[28,-26.2],[31.2,30],[100.5,13.7],[116.4,39.9],[-79.4,43.7],[-122.4,37.8],[144.9,-37.8],[3.4,6.5],[129,35.1],[135.5,34.7],[141.3,43.1],[106.8,-6.2],[120.9,14.6],[90.4,23.8],[72.9,19.1],[69.2,41.3],[82.9,55],[104,30.7],[113.3,23.1],[87.6,43.8],[115.9,-31.9],[153,-27.5],[174.8,-36.8],[-58.4,-34.6],[-77,-12],[-74.1,4.7],[-87.6,41.9],[-95.4,29.8],[-104.9,39.7],[-149.9,61.2],[-157.8,21.3],[18.4,-33.9],[36.8,-1.3],[-17.4,14.7],[12.5,41.9],[-3.7,40.4],[29,41],[44.4,33.3],[51.4,35.7],[46.7,24.7]];
+      const hubs = hubList.slice().sort((a, b) => a[0] - b[0]).map((p, i) => ({ p, g: i % 3 }));
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const cv = document.createElement("canvas");
+      cv.width = S * dpr; cv.height = S * dpr;
+      cv.style.cssText = "display:block; width:100%; height:100%";
+      el.innerHTML = ""; el.appendChild(cv);
+      const ctx = cv.getContext("2d");
+      ctx.scale(dpr, dpr);
+      const proj = geo.geoOrthographic().scale(R).translate([S / 2, S / 2]).clipAngle(90);
+      const path = geo.geoPath(proj, ctx);
+      const grat = geo.geoGraticule().step([15, 15])();
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let lon0 = -127, last = performance.now(), drag = null, vel = 0;
+      const P = 7600;
+      el.addEventListener("pointerdown", ev => { drag = { x: ev.clientX, y: ev.clientY, lon: lon0, tilt, lx: ev.clientX, lt: performance.now() }; vel = 0; el.style.cursor = "grabbing"; el.setPointerCapture(ev.pointerId); });
+      el.addEventListener("pointermove", ev => {
+        if (!drag) return;
+        const k = 180 / (el.clientWidth || S);
+        lon0 = drag.lon + (ev.clientX - drag.x) * k;
+        tilt = Math.max(-45, Math.min(10, drag.tilt - (ev.clientY - drag.y) * k));
+        const now = performance.now(); vel = (ev.clientX - drag.lx) * k / Math.max(1, now - drag.lt); drag.lx = ev.clientX; drag.lt = now;
+      });
+      const end = () => { if (!drag) return; drag = null; el.style.cursor = "grab"; };
+      el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+      const frame = (t) => {
+        if (!this.globeRef.current) return;
+        const dt = Math.min(64, t - last); last = t;
+        if (!drag) { vel *= 0.95; lon0 += vel * dt + (reduce ? 0 : dt * 0.0045); if (Math.abs(vel) < 0.0005) tilt += (-18 - tilt) * 0.02; }
+        proj.rotate([lon0, tilt, 0]);
+        ctx.clearRect(0, 0, S, S);
+        const g = ctx.createRadialGradient(S/2, S*0.28, 0, S/2, S/2, R*1.1);
+        g.addColorStop(0, "rgba(31,74,54,0.95)"); g.addColorStop(1, "rgba(20,37,29,0.2)");
+        ctx.beginPath(); path({ type: "Sphere" }); ctx.fillStyle = g; ctx.fill();
+        ctx.beginPath(); path(grat); ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 0.9; ctx.stroke();
+        const center = [-lon0, -tilt];
+        ctx.fillStyle = "rgba(255,255,255,0.34)";
+        ctx.beginPath();
+        for (const p of pts) {
+          if (geo.geoDistance(p, center) > Math.PI / 2 - 0.02) continue;
+          const xy = proj(p); if (!xy) continue;
+          ctx.moveTo(xy[0] + 1.25, xy[1]); ctx.arc(xy[0], xy[1], 1.25, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        ctx.beginPath(); path(landGeo); ctx.strokeStyle = "rgba(255,255,255,0.42)"; ctx.lineWidth = 0.9; ctx.stroke();
+        const lv = [];
+        for (const H of hubs) {
+          const d = geo.geoDistance(H.p, center);
+          if (d > 1.12) continue;
+          const edge = d < 0.82 ? 1 : 1 - (d - 0.82) / 0.3;
+          const ph = (t / P - H.g / 3) * Math.PI * 2;
+          const b = Math.pow(0.5 - 0.5 * Math.cos(ph), 1.6);
+          const xy = proj(H.p); if (!xy) continue;
+          lv.push({ ...H, xy, edge, b });
+        }
+        for (let g = 0; g < 3; g++) {
+          const grp = lv.filter(L => L.g === g);
+          for (let i = 0; i < grp.length - 1; i++) {
+            const A = grp[i], B = grp[i + 1];
+            const al = A.b * Math.min(A.edge, B.edge);
+            if (al < 0.02) continue;
+            const interp = geo.geoInterpolate(A.p, B.p);
+            ctx.beginPath(); let started = false;
+            for (let j = 0; j <= 40; j++) {
+              const ll = interp(j / 40);
+              if (geo.geoDistance(ll, center) > Math.PI / 2) { started = false; continue; }
+              const q = proj(ll); if (!q) continue;
+              const lift = Math.sin(Math.PI * j / 40) * 18;
+              const dx = q[0] - S / 2, dy = q[1] - S / 2, dd = Math.hypot(dx, dy) || 1;
+              const x = q[0] + dx / dd * lift, y = q[1] + dy / dd * lift;
+              if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = "rgba(255,255,255," + (0.38 * al).toFixed(3) + ")"; ctx.lineWidth = 1; ctx.stroke();
+          }
+        }
+        for (const L of lv) {
+          const x = L.xy[0], y = L.xy[1];
+          const a = L.edge * L.b;
+          if (a > 0.02) {
+            const rg = ctx.createRadialGradient(x, y, 0, x, y, 12 + 14 * L.b);
+            rg.addColorStop(0, "rgba(255,255,255," + (0.5 * a).toFixed(3) + ")"); rg.addColorStop(1, "rgba(255,255,255,0)");
+            ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, 28, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.fillStyle = "rgba(255,255,255," + (L.edge * (0.4 + 0.6 * L.b)).toFixed(3) + ")";
+          ctx.beginPath(); ctx.arc(x, y, 2.1 + 0.8 * L.b, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.beginPath(); path({ type: "Sphere" }); ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 1.1; ctx.stroke();
+        this._globeRaf = requestAnimationFrame(frame);
+      };
+      this._globeRaf = requestAnimationFrame(frame);
+    } catch (err) { console.warn("globe", err); }
+  }
+
+  componentDidMount() {
+    this._onResize = () => { const mm = window.innerWidth < 720; if (mm !== !!this.state.mob) this.setState({ mob: mm }); };
+    window.addEventListener("resize", this._onResize); this._onResize();
+    this._stepTimer = setInterval(() => this.setState(s => ({ stepFocus: ((s.stepFocus || 0) + 1) % 3 })), 2800);
+    this._painTimer = setInterval(() => this.setState(s => ({ painFocus: ((s.painFocus || 0) + 1) % 5 })), 3400);
+    this.drawGlobe();
+    this._onScroll = () => {
+      const s = (window.scrollY || document.documentElement.scrollTop || 0) > 90;
+      if (s !== this.state.scrolled) this.setState({ scrolled: s });
+    };
+    window.addEventListener("scroll", this._onScroll, { passive: true });
+    this._onScroll();
+  }
+
+  componentWillUnmount() { window.removeEventListener("scroll", this._onScroll); cancelAnimationFrame(this._globeRaf); clearInterval(this._painTimer); clearInterval(this._stepTimer); window.removeEventListener("resize", this._onResize); }
+
+  buildAppealGrid(appeals) {
+    return appeals.filter((_, i) => i !== 1).map((a, i) => ({
+      ...a,
+      no: String(i + 1).padStart(2, "0"),
+      filled: true,
+      col: i + 1,
+      row: 1,
+      offset: "0px",
+      bg: ["#12855b", "#14251d", "#0c6644", "#1f3a2c"][i],
+      shadow: "rgba(12,102,68,0.18)",
+      stroke: "rgba(46,160,110,0.42)"
+    }));
+  }
+
+  renderVals() {
+    const accent = this.props.accentColor ?? "#12855b";
+    const plans = [
+        { name: "인터넷 단독", fxRouter: "none", iconGap: "4px", iconZoom: 1, iconMargin: "26px 0 30px", desc: "TV 없이 인터넷만", price: "23,100~", cash: "10~30만원", cashLabel: "현금 혜택", badge: "", items: ["500M / 1G 선택", "설치비 면제", "공유기 포함"], bg: "transparent", shadow: "none", margin: "0px", fg: "#14251d", cashBg: "#e4f3eb", cashFg: "#0c6644", btnBg: "#f0f0f0", btnFg: "#3d3d3d" },
+        { name: "인터넷 + TV", fxRouter: "none", iconGap: "4px", iconZoom: 1, iconMargin: "26px 0 30px", tvLeft: true, desc: "가장 많이 고르는 결합", price: "32,000~", cash: "30~80만원", cashLabel: "현금 혜택", badge: "", items: ["인터넷 500M + TV 200여 채널", "셋톱박스 임대료 포함", "OTT 제휴 선택"], bg: "transparent", shadow: "none", margin: "0px", fg: "#14251d", cashBg: "#e4f3eb", cashFg: "#0c6644", btnBg: "#f0f0f0", btnFg: "#3d3d3d" },
+        { name: "3종 결합", hasPhone: true, tvRight: true, fxPhone: "translateY(-8px) rotate(-9deg)", fxRouter: "translate(6px,6px) rotate(3deg)", iconGap: "10px", iconZoom: 0.8, iconMargin: "auto 0 14px", fxTv: "translate(-6px,-24px) rotate(4deg)", desc: "가족 회선까지 묶기", price: "28,672~", cash: "60~120만원", cashLabel: "현금 혜택", badge: "", items: ["가족 최대 5회선", "회선당 추가 할인", "TV 프리미엄 채널"], bg: "#12855b", margin: "14px 16px", shadow: "none", fg: "#fff", cashBg: "rgba(255,255,255,0.16)", cashFg: "#fff", btnBg: "#fff", btnFg: "#0c6644" },
+        { name: "사무실 · 상가", hasDeskPhone: true, fxRouter: "none", iconGap: "4px", iconZoom: 1, iconMargin: "26px 0 30px", desc: "회사 전화기까지", price: "39,600", cash: "20~80만원", cashLabel: "현금 혜택", badge: "", items: ["기업용 인터넷 + 인터넷 전화", "대표번호·내선 구성", "다회선 할인"], bg: "transparent", shadow: "none", margin: "14px", fg: "#14251d", cashBg: "#e4f3eb", cashFg: "#0c6644", btnBg: "#f0f0f0", btnFg: "#3d3d3d" }
+      ];
+    plans.forEach(p => { if (!p.cashLabel) p.cashLabel = "예상 현금 혜택"; });
+    const appeals = [
+      { no: "01", title: "현금 혜택\n최대 140만원", body: "상품에 따라 최대 120만원까지 현금을 100% 돌려드려요." },
+      { no: "02", title: "사은품 100% 지급", body: "설치가 완료된 당일,\n확인한 후 약속드린\n사은품을 지급해드려요." },
+      { no: "03", title: "전 통신사 비교", body: "모든 통신사를 비교해\n사용 환경에 딱 맞는\n상품을 추천해드려요." },
+      { no: "04", title: "전담 상담원 1:1", body: "처음 연결된 상담원이 설치와 혜택 지급까지 끝까지 담당해요." },
+      { no: "05", title: "숨은 비용 '0원'", body: "설치비, 장비 임대료, 부가 서비스까지 상담 때 전부 알려드려요." }
+    ];
+    const f = this.state.form;
+    const mob = !!this.state.mob;
+    const r = mob
+      ? { mob: true, desk: false, brandDisp: "none", heroDescFs: "14.5px", descFs: "13.5px", prodDescW: "320px", revAlign: "center", stepsMargin: "32px auto 0 14px", stepsPad: "24px", dotLeft: "-35px", applyAlign: "center", navDisp: "none", heroPad: "128px 20px 290px", whyCols: "repeat(2,minmax(0,1fr))", whyGap: "12px", whyRatio: "auto", whyMinH: "188px", whyPad: "22px 18px 22px", planCols: "minmax(0,1fr)", applyPad: "0 6px", formShift: "0px", formPad: "28px 20px" }
+      : { mob: false, desk: true, brandDisp: "inline", heroDescFs: "16px", descFs: "14.5px", prodDescW: "520px", revAlign: "left", stepsMargin: "32px auto 0", stepsPad: "38px", dotLeft: "-49px", applyAlign: "left", navDisp: "flex", heroPad: "170px 40px 420px", whyCols: "repeat(4,minmax(0,1fr))", whyGap: "22px", whyRatio: "15 / 16", whyMinH: "0px", whyPad: "31px 24px 36px", planCols: "repeat(2,minmax(0,1fr))", applyPad: "36px 32px 0", formShift: "-40px", formPad: "36px 31px" };
+    const fi = this.state.painFocus || 0;
+    const fxOf = i => i === fi
+      ? { z: 3, scale: "scale(1.14)", blur: "blur(0px)", op: 1, shadow: "0 14px 34px rgba(20,37,29,0.16)", anim: "ngFloat 3.2s ease-in-out 0.9s infinite" }
+      : { z: 1, scale: "scale(1)", blur: "blur(5px)", op: 0.62, shadow: "0 3px 10px rgba(20,37,29,0.08)", anim: "ngFloatSoft " + (4.4 + i * 0.6).toFixed(1) + "s ease-in-out " + (-i * 1.3).toFixed(1) + "s infinite" };
+    const chips = ["인터넷 단독", "인터넷 + TV", "인터넷 + TV + 휴대폰", "사무실 · 회사 전화", "추천 받고 싶어요"];
+    return {
+      globeRef: this.globeRef, r,
+      inv: (() => { const iv = this.state.invalid || {}; const red = "#d93b30"; const ring = "inset 0 0 0 1.5px " + red; const okRing = "inset 0 0 0 1.5px #12855b"; const nameOk = !!f.name.trim(); const phoneOk = f.phone.replace(/\D/g, "").length >= 9; return {
+        nameLabel: iv.name ? red : "inherit", nameBg: iv.name ? "#fdf1f0" : (nameOk ? "#ffffff" : "#f2f2f2"), nameRing: iv.name ? ring : (nameOk ? okRing : "none"),
+        phoneLabel: iv.phone ? red : "inherit", phoneBg: iv.phone ? "#fdf1f0" : (phoneOk ? "#ffffff" : "#f2f2f2"), phoneRing: iv.phone ? ring : (phoneOk ? okRing : "none"),
+        prodLabel: iv.products ? red : "inherit", prodRing: iv.products ? ring : "none",
+        agreeText: iv.agree ? red : "#4e6259", nameOk: nameOk && this.state.focused !== "name", phoneOk: phoneOk && this.state.focused !== "phone" }; })(),
+      showPlanItems: false,
+      focus_name: () => this.setState({ focused: "name" }),
+      focus_phone: () => this.setState({ focused: "phone" }),
+      blurField: () => this.setState(s => {
+        const k = s.focused; const ff = s.form;
+        const bad = k === "name" ? !ff.name.trim() : k === "phone" ? ff.phone.replace(/\D/g, "").length < 9 : false;
+        return { focused: null, invalid: k ? { ...s.invalid, [k]: bad } : s.invalid };
+      }),
+      productSummary: f.products.join("\n"),
+      hasCarrier: !!f.carrier,
+      carrierLabel: this.state.invalid.carrier ? "#d93b30" : "#14251d",
+      carrierBoxes: [["LG U+", "carrier-kt"], ["SK", "carrier-skb", "118%"], ["KT", "carrier-hellovision"], ["엘지헬로비전", "carrier-lg", "78%"]].map(([label, slot, sz = "100%"]) => {
+        const on = f.carrier === label;
+        const img = { "LG U+": "assets/carrier-lguplus.png", "SK": "assets/carrier-skb.png", "KT": "assets/carrier-kt.png", "엘지헬로비전": "assets/carrier-lghellovision.png" }[label];
+        return { label, slot, img, sz, on, textFg: on ? accent : "#555555", ring: on ? "inset 0 0 0 1.5px " + accent : (this.state.invalid.carrier ? "inset 0 0 0 1.5px #d93b30" : "inset 0 0 0 1px #e3e3e3"), pick: () => this.setState(s => ({ form: { ...s.form, carrier: s.form.carrier === label ? "" : label }, invalid: { ...s.invalid, carrier: false } })) };
+      }),
+      kakaoOpen: !!this.state.kakaoOpen,
+      toTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+      openKakao: () => {
+        window.open("https://open.kakao.com/o/sAU2tjTi", "_blank", "noopener");
+      },
+      closeKakao: () => this.setState({ kakaoOpen: false }),
+      callOpen: !!this.state.callOpen,
+      openCall: () => this.setState({ callOpen: true }),
+      closeCall: () => this.setState({ callOpen: false }),
+      stop: e => e.stopPropagation(),
+      scrolled: this.state.scrolled, atTop: !this.state.scrolled,
+      submitBg: (f.name.trim() && f.phone.replace(/\D/g, "").length >= 9 && !!f.carrier && f.products.length > 0 && f.agree) ? "#12855b" : "#e3e3e3",
+      submitFg: (f.name.trim() && f.phone.replace(/\D/g, "").length >= 9 && !!f.carrier && f.products.length > 0 && f.agree) ? "#fff" : "#555",
+      accent, form: f, error: this.state.error, submitted: this.state.submitted,
+      showForm: !this.state.submitted, submittedName: this.state.submittedName,
+      onName: e => this.set("name", e.target.value),
+      onPhone: e => {
+        const d = e.target.value.replace(/\D/g, "").slice(0, 11);
+        const v = d.length < 4 ? d : d.length < 8 ? d.slice(0, 3) + "-" + d.slice(3) : d.slice(0, 3) + "-" + d.slice(3, 7) + "-" + d.slice(7);
+        this.set("phone", v);
+      },
+      onAgree: e => this.set("agree", e.target.checked),
+      reset: () => this.setState({ submitted: false, error: "" }),
+      productChips: chips.map(label => {
+        const on = f.products.includes(label);
+        return { label, toggle: () => this.toggle(label), bg: on ? accent : "#f2f2f2", fg: on ? "#fff" : "#666666" };
+      }),
+      submit: () => {
+        const invalid = { name: !f.name.trim(), phone: f.phone.replace(/\D/g, "").length < 9, carrier: !f.carrier, products: f.products.length === 0, agree: !f.agree };
+        if (invalid.name || invalid.phone || invalid.carrier || invalid.products || invalid.agree) return this.setState({ invalid });
+        const url = (this.props.sheetUrl || "https://script.google.com/macros/s/AKfycbxkJH1649bP4dellr0MbhcPM2IU9HmEn1eSCU1kXerOL3IzzdoCZo6t892AKEkc1p2Y/exec").trim();
+        if (url) {
+          const payload = { name: f.name.trim(), phone: f.phone, products: (f.carrier ? "[" + f.carrier + "] " : "") + f.products.join(", "), carrier: f.carrier, agree: f.agree ? "동의" : "", submittedAt: new Date().toISOString(), page: location.href };
+          fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) }).catch(err => console.warn("sheet", err));
+        }
+        this.setState({ submitted: true, submittedName: f.name.trim(), error: "", invalid: {} });
+      },
+      stats: this.props.showStats === false ? [] : [
+        { value: "최대 120만원", label: "현금 혜택 지원 한도" },
+        { value: "당일 설치", label: "조건 맞으면 신청 당일" },
+        { value: "3개 통신사", label: "KT·SKB·LGU+ 전 상품" },
+        { value: "0원", label: "상담·견적 수수료" }
+      ],
+      pains: [
+        { quote: "혜택 조건이 불투명해요", answer: "지급 금액과 시점, 조건을 신청 직후 문자로 남겨드려요. 적힌 금액을 그대로 지급해요." },
+        { quote: "여러 곳을 비교하기 번거로워요", answer: "주소 기준으로 설치 가능한 날짜를 먼저 확인해 알려드려요. 조건이 맞으면 당일도 가능해요." },
+        { quote: "뭘 해야할 지 모르겠어요", answer: "사용 패턴과 기존 약정을 듣고 인터넷·TV·모바일·사무실 전화 조합을 계산해 추천해요." }
+      ].map((p, i) => ({ ...p, fx: fxOf(i + 1) })),
+      pf0: fxOf(0), pf1: fxOf(1), pf2: fxOf(2), pf3: fxOf(3), pf4: fxOf(4),
+      pq1: "혜택 조건이 불투명해요", pq2: "여러 곳을 비교하기 번거로워요", pq3: "뭘 해야할 지 모르겠어요",
+      plans, planRows: [plans.slice(0, 2), plans.slice(2, 4)],
+      appeals,
+      appealGrid: this.buildAppealGrid(appeals).map((a, i) => mob ? { ...a, col: (i % 2) + 1, row: Math.floor(i / 2) + 1 } : a),
+      steps: [
+        { no: "1", time: "1분", clock: true, title: "신청서 작성", body: "신청서를 작성하면 입력하신 연락처로\n전화 상담이 진행돼요." },
+        { no: "2", time: "30분", clock: true, title: "비교 견적 상담", body: "고객님의 사용 환경과 용량에 맞춰 딱 맞는 요금제 추천 및 받을 수 있는 현금 혜택까지 꼼꼼하게 안내드려요." },
+        { no: "3", time: "당일", clock: false, title: "설치 후 사은품 지급", body: "가입 확정 시 접수 후 설치 일정을 잡고,\n설치가 확인 되면 설치 당일 현금이 지급돼요." }
+      ].map((st, i) => { const on = i === (this.state.stepFocus || 0); return { ...st, op: on ? 1 : 0.42, scale: on ? "scale(1.04)" : "scale(1)", dot: on ? "#12855b" : "#c9c9c9", glow: on ? "0 0 10px 2px rgba(255,255,255,0.95), 0 0 16px 4px rgba(18,133,91,0.28)" : "0 0 0 0 rgba(255,255,255,0), 0 0 0 0 rgba(18,133,91,0)" }; })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
