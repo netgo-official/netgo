@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#ffffff; color:#14251d; font-family:Pretendard,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#12855b; text-decoration:none; }
+  a:hover { color:#0c6644; }
+  button { font-family:inherit; }
+  image-slot[id^="pd-"]::part(frame){background:transparent}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+<div style="width:100%; min-height:100vh; display:flex; flex-direction:column">
+  <header style="position:sticky; top:0; z-index:50; padding:12px 16px; background:#ffffff">
+    <div style="max-width:1080px; margin:0 auto; padding:12px 16px 12px 12px; border-radius:22px; display:flex; align-items:center; gap:18px">
+      <button type="button" onClick="{{ goBack }}" aria-label="뒤로 가기" style="margin-right:auto; width:40px; height:40px; border:none; border-radius:50%; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#14251d" style-hover="background:rgba(20,37,29,0.06)"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <nav style="display:{{ navDisp }}; gap:22px; padding-right:16px; font-size:14px; font-weight:600; color:#4e6259">
+        <a href="index.html" style="color:inherit">인터넷</a><a href="index.html#how" style="color:inherit">신청방법</a><a href="faq.html" style="color:inherit">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="flex:1; padding:20px 20px 96px">
+    <div style="max-width:1000px; margin:0 auto">
+      <div style="font-size:13px; font-weight:600; color:#8aa197"><a href="rental.html" style="color:inherit">가전 렌탈</a> <span style="margin:0 4px">›</span> {{ p.section }} <span style="margin:0 4px">›</span> {{ p.category }}</div>
+
+      <div style="margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); gap:40px; align-items:start">
+        <div style="min-width:0">
+          <div style="position:relative; width:100%; aspect-ratio:1 / 1; border-radius:24px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.05); overflow:hidden">
+            <div style="position:absolute; inset:0; display:flex; transform:{{ trackX }}; transition:transform 0.55s cubic-bezier(.22,.8,.3,1)">
+              <sc-for list="{{ slides }}" as="sl" hint-placeholder-count="0">
+                <div role="img" aria-label="{{ p.name }}" style="flex:0 0 100%; height:100%; background-image:{{ sl.bg }}; background-size:contain; background-position:center; background-repeat:no-repeat"></div>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ multi }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:12px; display:flex; align-items:center; gap:8px">
+            <button type="button" onClick="{{ prevImg }}" aria-label="이전 사진" style="flex:none; width:32px; height:32px; padding:0; border:none; border-radius:50%; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#4e6259; display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="color:#12855b; box-shadow:inset 0 0 0 1px #12855b"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M15 6l-6 6 6 6"></path></svg></button>
+            <div style="flex:1; min-width:0; display:flex; justify-content:center; gap:8px">
+              <sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="0">
+                <button type="button" onClick="{{ t.pick }}" aria-label="사진 {{ t.n }}" style="position:relative; flex:0 1 72px; aspect-ratio:1 / 1; padding:0; border:none; border-radius:12px; background:#ffffff; box-shadow:{{ t.ring }}; overflow:hidden; cursor:pointer; transition:box-shadow 0.2s ease"><span style="position:absolute; inset:8%; background-image:{{ t.bg }}; background-size:contain; background-position:center; background-repeat:no-repeat"></span></button>
+              </sc-for>
+            </div>
+            <button type="button" onClick="{{ nextImg }}" aria-label="다음 사진" style="flex:none; width:32px; height:32px; padding:0; border:none; border-radius:50%; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#4e6259; display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="color:#12855b; box-shadow:inset 0 0 0 1px #12855b"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M9 6l6 6-6 6"></path></svg></button>
+          </div>
+          </sc-if>
+        </div>
+
+        <div style="min-width:0">
+          <div style="display:flex; align-items:flex-start; gap:12px">
+            <div style="flex:1; min-width:0">
+              <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px">
+                <span style="font-size:13.5px; font-weight:600; color:#9aa8a1">{{ p.brand }}</span>
+                <sc-if value="{{ hasRental }}" hint-placeholder-val="{{ true }}"><span style="padding:3px 9px; border-radius:999px; background:#e9f6ef; color:#12855b; font-size:12px; font-weight:700">{{ p.rental }}</span></sc-if>
+              </div>
+              <h1 style="margin:8px 0 0; font-size:clamp(20px,2.5vw,25px); line-height:1.3; letter-spacing:-0.03em; font-weight:800; text-wrap:pretty">{{ p.name }}</h1>
+            </div>
+            <button type="button" onClick="{{ share }}" aria-label="공유하기" style="flex:none; width:40px; height:40px; border:none; border-radius:50%; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); display:flex; align-items:center; justify-content:center; cursor:pointer; color:#4e6259" style-hover="color:#12855b; box-shadow:inset 0 0 0 1px #12855b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><circle cx="18" cy="5.5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="18.5" r="2.5"></circle><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"></path></svg></button>
+          </div>
+          <sc-if value="{{ copied }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px; font-size:12.5px; font-weight:600; color:#12855b">링크가 복사되었어요.</div></sc-if>
+
+          <div style="margin-top:20px; display:flex; flex-wrap:wrap; align-items:baseline; gap:6px">
+            <span style="font-size:14px; font-weight:600; color:#4e6259">월 렌탈료</span>
+            <span style="font-size:30px; font-weight:800; letter-spacing:-0.03em">{{ priceText }}</span>
+            <span style="font-size:15px; font-weight:700">원</span>
+            <button type="button" onClick="{{ openCard }}" style="margin-left:auto; align-self:center; padding:0; border:none; background:transparent; display:flex; align-items:center; gap:4px; color:#12855b; font-size:13.5px; font-weight:700; cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="display:block"><defs><linearGradient id="cardG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cf2"></stop><stop offset="0.55" stop-color="#3fb6e8"></stop><stop offset="1" stop-color="#3fc78c"></stop></linearGradient></defs><rect x="2" y="5" width="20" height="14" rx="3" fill="url(#cardG)"></rect><rect x="2" y="8.2" width="20" height="2.4" fill="#2a2f5a" opacity="0.55"></rect><rect x="4.5" y="12.6" width="4.6" height="3.4" rx="0.9" fill="#ffd25a"></rect><circle cx="16.6" cy="15.2" r="1.7" fill="#ff7a6b"></circle><circle cx="18.6" cy="15.2" r="1.7" fill="#ffb84d" opacity="0.9"></circle></svg>제휴카드 할인<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M9 6l6 6-6 6"></path></svg></button>
+          </div>
+
+          <sc-if value="{{ hasGroups }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:24px; padding-top:22px; border-top:1px solid #e8ece9; display:grid; gap:10px">
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+              <div style="border-radius:14px; background:#ffffff; box-shadow:{{ g.ring }}; overflow:hidden">
+                <button type="button" onClick="{{ g.toggle }}" style="width:100%; padding:18px 16px; border:none; background:transparent; display:flex; align-items:center; gap:10px; cursor:pointer; text-align:left; color:#14251d">
+                  <span style="flex:none; font-size:14px; font-weight:700">{{ g.title }}</span>
+                  <span style="flex:1; min-width:0; text-align:right; font-size:13.5px; font-weight:600; color:{{ g.noteColor }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ g.note }}</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; display:block; color:#8aa197; transform:{{ g.rot }}; transition:transform 0.3s ease"><path d="M6 9l6 6 6-6"></path></svg>
+                </button>
+                <div style="display:grid; grid-template-rows:{{ g.rows }}; transition:grid-template-rows 0.35s ease">
+                <div style="min-height:0; overflow:hidden">
+                <div style="padding:0 12px 12px; display:flex; flex-wrap:wrap; gap:8px">
+                  <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ o.pick }}" style="flex:1 1 auto; padding:12px 14px; border:none; border-radius:10px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; color:{{ o.fg }}; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.2s ease, box-shadow 0.2s ease; display:flex; flex-direction:column; align-items:center; gap:2px"><span>{{ o.label }}</span><sc-if value="{{ o.hasAdd }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px; font-weight:600; opacity:0.75">{{ o.add }}</span></sc-if></button>
+                  </sc-for>
+                </div>
+                </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ optErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:12px; font-size:13px; font-weight:600; color:#d93b30">빨간색으로 표시된 옵션을 선택해 주세요.</div></sc-if>
+          <button type="button" onClick="{{ apply }}" disabled="{{ applied }}" style="margin-top:26px; width:100%; padding:18px; border:none; border-radius:14px; background:{{ applyBg }}; color:{{ applyFg }}; font-size:16px; font-weight:800; letter-spacing:-0.02em; cursor:pointer; transition:background 0.2s ease, color 0.2s ease, transform 0.15s ease" style-hover="background:#12855b; color:#ffffff" style-active="background:#0c6644; color:#ffffff; transform:scale(0.98)">{{ applyLabel }}</button>
+        </div>
+        </div>
+      </div>
+
+      <section style="margin-top:72px; padding:0 clamp(0px,4vw,40px)">
+        <div style="padding-bottom:16px; border-bottom:1px solid #e8ece9; font-size:18px; font-weight:800; letter-spacing:-0.02em">제품 정보</div>
+        <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); column-gap:40px">
+          <sc-for list="{{ specs }}" as="s" hint-placeholder-count="6">
+            <div style="display:grid; grid-template-columns:96px minmax(0,1fr); gap:12px; padding:14px 0; border-bottom:1px solid #eef1ef; font-size:14px">
+              <span style="font-weight:600; color:#8aa197">{{ s.k }}</span>
+              <span style="font-weight:600; color:#14251d">{{ s.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="margin-top:64px; padding:0 clamp(0px,4vw,40px)">
+        <div style="padding-bottom:16px; border-bottom:1px solid #e8ece9; font-size:18px; font-weight:800; letter-spacing:-0.02em">넷고 렌탈 혜택</div>
+        <div style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:12px">
+          <sc-for list="{{ common }}" as="c" hint-placeholder-count="3">
+            <div style="padding:28px 26px; border-radius:18px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.06)">
+              <div style="font-size:15px; font-weight:800; letter-spacing:-0.02em">{{ c.t }}</div>
+              <div style="margin-top:12px; font-size:13.5px; line-height:1.6; color:#4e6259; text-wrap:pretty">{{ c.d }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="margin-top:64px; padding:0 clamp(0px,4vw,40px)">
+        <div style="padding-bottom:16px; border-bottom:1px solid #e8ece9; font-size:18px; font-weight:800; letter-spacing:-0.02em">상품 상세</div>
+        <div style="margin:28px auto 0; max-width:760px; display:grid; gap:0">
+          <sc-for list="{{ detailSlots }}" as="d" hint-placeholder-count="0">
+            <div style="width:100%; padding:32px 0; background:#ffffff; overflow:hidden"><img src="{{ d.src }}" alt="{{ p.name }} 상세 {{ d.n }}" referrerpolicy="no-referrer" loading="lazy" style="width:100%; max-width:440px; aspect-ratio:1 / 1; object-fit:contain; margin:0 auto; display:block" /></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ detailMore }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:24px; display:flex; justify-content:center">
+            <button type="button" onClick="{{ expandDetail }}" style="display:flex; align-items:center; gap:6px; padding:14px 28px; border:none; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#14251d; font-size:14.5px; font-weight:700; cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px #12855b; color:#12855b">자세히 보기<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 9l6 6 6-6"></path></svg></button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ detailLess }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:24px; display:flex; justify-content:center">
+            <button type="button" onClick="{{ collapseDetail }}" style="display:flex; align-items:center; gap:6px; padding:14px 28px; border:none; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#14251d; font-size:14.5px; font-weight:700; cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px #12855b; color:#12855b">간략하게<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 15l6-6 6 6"></path></svg></button>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+  </main>
+  <footer style="padding:36px 20px 33px; background:#12855b">
+    <div style="max-width:1080px; margin:0 auto; padding:12px 28px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:16px; font-size:13px; line-height:1.6; color:rgba(255,255,255,0.82)">
+      <div>
+        <div style="display:flex; align-items:center; gap:9px">
+          <img src="assets/netgo-logo-green-mark-v2.png" alt="넷고" style="width:24px; height:24px; display:block; object-fit:contain" />
+          <span style="font-size:17px; font-weight:500; letter-spacing:0.12em; color:#ffffff">NetGo</span>
+        </div>
+      </div>
+      <div>상호 넷고 (NetGo)<br />사업자등록번호 558-29-01891<br />통신판매업신고 제2026-경기양주-1222호</div>
+      <div><a href="index.html#apply" style="color:#ffffff; font-weight:700">상담 신청</a><br />070-4647-1124<br />평일 09:00-18:00</div>
+    </div>
+    <div style="max-width:1080px; margin:8px auto 0; padding:12px 28px 0; border-top:1px solid rgba(255,255,255,0.2); font-size:12px; color:rgba(255,255,255,0.66)">Copyright © NetGo. All rights reserved</div>
+  </footer>
+
+  <div style="position:fixed; right:18px; bottom:18px; z-index:60; display:flex; flex-direction:column; gap:10px">
+    <button type="button" onClick="{{ toTop }}" aria-label="맨 위로" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#ffffff; color:#14251d; box-shadow:0 6px 18px rgba(20,37,29,0.14), inset 0 0 0 1px rgba(20,37,29,0.08); display:flex; align-items:center; justify-content:center; transition:transform 0.2s ease" style-hover="transform:scale(1.06)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 15l6-6 6 6"></path></svg></button>
+    <button type="button" onClick="{{ openKakao }}" aria-label="카카오톡 상담" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#FEE500; color:#191919; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.16)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,0.2)"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="display:block"><path fill="#191919" d="M12 3.6c-5 0-9 3.1-9 7 0 2.5 1.7 4.7 4.2 6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.3 0 .7.1 1 .1 5 0 9-3.1 9-7s-4-7.3-9-7.3z"></path></svg></button>
+    <button type="button" onClick="{{ openCall }}" aria-label="전화 상담 070-4647-1124" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#0c6644; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(12,102,68,0.34)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(12,102,68,0.42)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="display:block"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"></path></svg></button>
+  </div>
+
+  <sc-if value="{{ callOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCall }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="전화 상담" onClick="{{ stop }}" style="width:100%; max-width:340px; padding:30px 26px 24px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25); text-align:center">
+        <div style="font-size:14px; font-weight:700; color:#8aa197">전화 상담</div>
+        <div style="margin-top:8px; font-size:28px; font-weight:800; letter-spacing:-0.03em; color:#14251d">070-4647-1124</div>
+        <div style="margin-top:6px; font-size:13px; color:#8aa197">평일 09:00 - 18:00</div>
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <button type="button" onClick="{{ closeCall }}" style="padding:15px; border:none; border-radius:14px; background:#f2f2f2; color:#3d3d3d; font-size:15px; font-weight:700; cursor:pointer">닫기</button>
+          <a href="tel:070-4647-1124" target="_top" style="display:flex; align-items:center; justify-content:center; padding:15px; border-radius:14px; background:#0c6644; color:#fff; font-size:15px; font-weight:700">전화 연결</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeForm }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="렌탈 신청" onClick="{{ stop }}" style="position:relative; width:100%; max-width:380px; padding:30px 24px 24px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25)">
+        <button type="button" onClick="{{ closeForm }}" aria-label="닫기" style="position:absolute; top:14px; right:14px; width:36px; height:36px; border:none; border-radius:50%; background:transparent; color:#14251d; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        <div style="font-size:19px; font-weight:800; letter-spacing:-0.02em">렌탈 신청</div>
+        <div style="margin-top:8px; font-size:13.5px; line-height:1.6; color:#4e6259">성함과 연락처를 남겨주시면 확인 후 연락드릴게요.</div>
+          <div style="margin-top:22px; display:grid; gap:8px">
+              <div style="display:grid; gap:6px">
+                <input type="text" value="{{ fName.val }}" onChange="{{ fName.on }}" placeholder="성함을 입력해 주세요." style="width:100%; padding:15px 16px; border:none; border-radius:14px; background:#f2f2f2; box-shadow:{{ fName.ring }}; font-family:inherit; font-size:15px; font-weight:600; color:#14251d; outline:none" style-focus="background:#ffffff; box-shadow:inset 0 0 0 1.5px #4e5a54" />
+              </div>
+              <div style="display:grid; gap:6px">
+                <input type="tel" value="{{ fPhone.val }}" onChange="{{ fPhone.on }}" placeholder="연락처를 - 없이 입력해 주세요." style="width:100%; padding:15px 16px; border:none; border-radius:14px; background:#f2f2f2; box-shadow:{{ fPhone.ring }}; font-family:inherit; font-size:15px; font-weight:600; color:#14251d; outline:none" style-focus="background:#ffffff; box-shadow:inset 0 0 0 1.5px #4e5a54" />
+              </div>
+        </div>
+        <div style="margin-top:14px; padding:14px 16px; border-radius:12px; background:#f6f7f6; display:flex; align-items:flex-start; gap:12px; font-size:13px; line-height:1.6; color:#4e6259"><span style="flex:none; margin-top:1px; width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg, #8a7cf6 0%, #5b6cf0 50%, #3fa6e8 100%); display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><div style="flex:1; min-width:0"><div style="font-weight:700; color:#14251d">{{ p.name }}</div><div>{{ optSummary }}</div><div style="margin-top:2px; font-weight:700; color:#14251d">월 {{ priceText }}원</div></div></div>
+        <sc-if value="{{ formErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px; font-size:13px; font-weight:600; color:#d93b30">빨간색으로 표시된 항목을 입력해 주세요.</div></sc-if>
+        <button type="button" onClick="{{ submit }}" style="margin-top:16px; width:100%; padding:16px; border:none; border-radius:14px; background:{{ subBg }}; color:{{ subFg }}; font-size:15.5px; font-weight:800; cursor:pointer; transition:background 0.2s ease, color 0.2s ease">신청하기</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeShare }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="공유하기" onClick="{{ stop }}" style="position:relative; width:100%; max-width:360px; padding:28px 22px 24px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25)">
+        <button type="button" onClick="{{ closeShare }}" aria-label="닫기" style="position:absolute; top:14px; right:14px; width:36px; height:36px; border:none; border-radius:50%; background:transparent; color:#14251d; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        <div style="font-size:18px; font-weight:800; letter-spacing:-0.02em; color:#14251d">공유하기</div>
+        <div style="margin-top:22px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px">
+          <button type="button" onClick="{{ shareCopy }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 0; border:none; background:transparent; cursor:pointer; color:#3d4743; font-size:12.5px; font-weight:600" style-hover="color:#14251d"><span style="width:52px; height:52px; border-radius:50%; background:#f2f4f3; display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3d4743" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"></path><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"></path></svg></span>URL 복사</button>
+          <button type="button" onClick="{{ shareKakao }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 0; border:none; background:transparent; cursor:pointer; color:#3d4743; font-size:12.5px; font-weight:600" style-hover="color:#14251d"><span style="width:52px; height:52px; border-radius:50%; background:#FEE500; display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="display:block"><path fill="#191919" d="M12 3.6c-5 0-9 3.1-9 7 0 2.5 1.7 4.7 4.2 6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.3 0 .7.1 1 .1 5 0 9-3.1 9-7s-4-7.3-9-7.3z"></path></svg></span>카카오톡</button>
+          <button type="button" onClick="{{ shareSms }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 0; border:none; background:transparent; cursor:pointer; color:#3d4743; font-size:12.5px; font-weight:600" style-hover="color:#14251d"><span style="width:52px; height:52px; border-radius:50%; background:#34c759; display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M4 5h16v11H9l-5 4z"></path></svg></span>메시지</button>
+          <button type="button" onClick="{{ shareMore }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 0; border:none; background:transparent; cursor:pointer; color:#3d4743; font-size:12.5px; font-weight:600" style-hover="color:#14251d"><span style="width:52px; height:52px; border-radius:50%; background:#f2f4f3; display:flex; align-items:center; justify-content:center"><svg viewBox="0 0 24 24" width="22" height="22" fill="#3d4743" aria-hidden="true" style="display:block"><circle cx="6" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="18" cy="12" r="1.8"></circle></svg></span>더보기</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ cardOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCard }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="제휴카드 할인 안내" onClick="{{ stop }}" style="position:relative; width:100%; max-width:420px; padding:30px 26px 26px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25)">
+        <button type="button" onClick="{{ closeCard }}" aria-label="닫기" style="position:absolute; top:14px; right:14px; width:36px; height:36px; border:none; border-radius:50%; background:transparent; color:#14251d; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        <div style="font-size:19px; font-weight:800; letter-spacing:-0.02em">제휴카드 할인 안내</div>
+        <div style="margin-top:12px; font-size:14px; line-height:1.65; color:#4e6259">렌탈료를 제휴카드로 자동이체하고 전월 실적을 채우면, 매달 렌탈료에서 할인을 받을 수 있어요.</div>
+        <div style="margin-top:18px; display:grid; gap:8px">
+          <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:14px 16px; border-radius:12px; background:#f6f7f6; font-size:14px"><span style="font-weight:600; color:#4e6259">{{ r.k }}</span><span style="font-weight:800; color:#12855b">{{ r.v }}</span></div>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px; font-size:12.5px; line-height:1.6; color:#8aa197">카드사와 렌탈사에 따라 할인 금액이 달라요. 상담 시 받을 수 있는 카드를 정확히 안내해 드려요.</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  // 상세 정보(옵션·스펙·사진)를 따로 받은 상품. 상품번호로 찾아 우선 적용돼요.
+  detailed = { "20174": {
+    id: "20174",
+    section: "주방가전",
+    category: "정수기",
+    brand: "LG전자",
+    rental: "LG전자구독",
+    name: "오브제컬렉션 ALL직수 상하좌우 냉온정수기",
+    model: "WD525ACB/GB",
+    img: "https://tlpartner.speedycdn.net/data/file/item_product/990098305_9uoXK8pa_WD525ACBGB_480x480.gif",
+    // 대표 사진 여러 장 (비어 있으면 img 한 장만 사용)
+    images: ["assets/products/20174-1.png", "assets/products/20174-2.png"],
+    base: 19900,
+    specs: [["브랜드", "LG전자"], ["모델명", "WD525ACB/GB"], ["제품종류", "냉온정수기"], ["정수방식", "직수형"], ["타입", "하프형"], ["기능", "냉온전용"], ["AS기간", "렌탈기간 내"]],
+    groups: [
+      { key: "term", title: "렌탈기간", opts: [["5년", 0], ["6년", 0]] },
+      { key: "care", title: "관리주기", opts: [["자가관리(타사보상)", 0], ["자가관리", 10000], ["방문관리/6개월(타사보상)", 3000], ["방문관리/6개월", 13000]] },
+      { key: "color", title: "제품색상", opts: [["카밍베이지", 0], ["카밍그린", 0]] }
+    ]
+  } };
+  // 상세 정보가 없는 상품에 공통으로 보여주는 선택 사항 (가격은 바뀌지 않아요)
+  commonGroups = [
+    { key: "term", title: "희망 렌탈기간", opts: [["3년", 0], ["4년", 0], ["5년", 0], ["6년", 0], ["7년", 0]] },
+    { key: "care", title: "관리 방식", opts: [["방문관리", 0], ["자가관리", 0], ["상담 후 결정", 0]] },
+    { key: "trade", title: "타사 렌탈 보유 여부", opts: [["있음(교체 희망)", 0], ["없음", 0]] }
+  ];
+  get product() { return this.state.prod || this.detailed["20174"]; }
+  buildProduct(no, data) {
+    if (this.detailed[no]) return this.detailed[no];
+    for (const sec of data) {
+      const x = sec.items.find(i => i.no === no);
+      if (!x) continue;
+      const rental = (x.rc || [])[0] || "";
+      const specs = [["브랜드", x.co || "-"], ["모델명", x.m || "-"], ["제품종류", x.c || "-"]];
+      if (rental) specs.push(["렌탈사", rental]);
+      return { id: no, section: sec.title, category: x.c || "", brand: x.co || "", rental, name: x.n, model: x.m || "", img: x.img, images: [], base: +String(x.p || "0").replace(/,/g, ""), specs, groups: this.commonGroups };
+    }
+    return null;
+  }
+  common = [
+    { t: "더 합리적인 렌탈료", d: "다양한 할인과 혜택을 더해 부담 없는 가격으로 이용하실 수 있어요." },
+    { t: "무료 설치·배송", d: "전문 기사님이 방문해 설치부터 사용법 안내까지 도와드려요." },
+    { t: "렌탈기간 내 무상 AS", d: "렌탈기간 동안 고장이 나면 렌탈사에서 무상으로 수리해 드려요." }
+  ];
+  state = { sel: {}, callOpen: false, cardOpen: false, copied: false, mob: false, detailOpen: false };
+  imgs() { const p = this.product; return p.images && p.images.length ? p.images : [p.img]; }
+  go(d) { const n = this.imgs().length; this.setState(st => ({ cur: ((st.cur || 0) + d + n) % n })); this.restart(); }
+  restart() {}
+  // GIF 대표 사진을 장면별 사진으로 나눠 슬라이드/작은 사진에 넣어요.
+  gifFrames(buf) {
+    const b = new Uint8Array(buf); if (b[0] !== 0x47 || b[1] !== 0x49) return 1;
+    let i = 13; if (b[10] & 0x80) i += 3 * (1 << ((b[10] & 7) + 1));
+    let n = 0;
+    const skip = () => { while (i < b.length) { const s = b[i++]; if (!s) break; i += s; } };
+    while (i < b.length) {
+      const t = b[i++];
+      if (t === 0x21) { i++; skip(); }
+      else if (t === 0x2C) { n++; const f = b[i + 8]; i += 9; if (f & 0x80) i += 3 * (1 << ((f & 7) + 1)); i++; skip(); }
+      else break;
+    }
+    return n || 1;
+  }
+  splitFrames(prod) {
+    if (!/\.gif(\?|$)/i.test(prod.img)) return;
+    const src = encodeURIComponent(prod.img.replace(/^https?:\/\//, ""));
+    fetch("https://images.weserv.nl/?url=" + src + "&n=-1&output=gif").then(r => r.arrayBuffer()).then(buf => {
+      const n = Math.min(this.gifFrames(buf), 8);
+      if (n < 2) return;
+      const images = Array.from({ length: n }, (_, k) => "https://images.weserv.nl/?url=" + src + "&page=" + k + "&trim=8&w=480&h=480&fit=contain&cbg=ffffff&output=png");
+      this.setState(st => st.prod && st.prod.id === prod.id ? { prod: { ...st.prod, images }, cur: 0 } : null);
+    }).catch(() => {});
+  }
+  saveRecent(prod) {
+    try {
+      const list = JSON.parse(localStorage.getItem("netgo-recent") || "[]").filter(x => x.no !== prod.id);
+      list.unshift({ no: prod.id, n: prod.name, co: prod.brand, img: prod.img, p: prod.base.toLocaleString("ko-KR") });
+      localStorage.setItem("netgo-recent", JSON.stringify(list.slice(0, 12)));
+    } catch (e) {}
+  }
+  componentDidMount() {
+    const no = new URLSearchParams(window.location.search).get("no");
+    if (no && !this.detailed[no]) fetch("data/rental-products.json").then(r => r.json()).then(data => { const prod = this.buildProduct(no, data); if (prod) { this.setState({ prod, sel: {}, cur: 0 }); document.title = prod.name + " | 넷고"; this.saveRecent(prod); this.splitFrames(prod); } }).catch(() => {});
+    if (!no || this.detailed[no]) this.saveRecent(this.product);
+    this.restart(); this._r = () => { const m = window.innerWidth < 720; if (m !== this.state.mob) this.setState({ mob: m }); }; window.addEventListener("resize", this._r); this._r(); }
+  componentWillUnmount() { window.removeEventListener("resize", this._r); clearTimeout(this._ct); clearInterval(this._iv); }
+  renderVals() {
+    const p = this.product, s = this.state, accent = "#12855b";
+    let price = p.base;
+    p.groups.forEach(g => { const o = s.sel[g.key] != null ? g.opts[s.sel[g.key]] : null; if (o) price += o[1]; });
+    const all = this.imgs(), cur = (s.cur || 0) % all.length;
+    const n = s.detailOpen ? all.length : Math.min(2, all.length);
+    return {
+      p,
+      hasRental: !!p.rental,
+      hasGroups: p.groups.length > 0,
+      navDisp: s.mob ? "none" : "flex",
+      priceText: price.toLocaleString("ko-KR"),
+      specs: p.specs.map(([k, v]) => ({ k, v })),
+      common: this.common,
+      groups: p.groups.map(g => ({ title: g.title, note: s.sel[g.key] != null ? g.opts[s.sel[g.key]][0] : "선택해 주세요", noteColor: s.sel[g.key] != null ? "#12855b" : "#a3aea8", ring: s.bad && s.bad[g.key] && s.sel[g.key] == null ? "inset 0 0 0 1.5px #d93b30" : "inset 0 0 0 1px rgba(20,37,29,0.08)", rows: s.openG === g.key ? "1fr" : "0fr", rot: s.openG === g.key ? "rotate(180deg)" : "none", toggle: () => this.setState(st => ({ openG: st.openG === g.key ? null : g.key })), opts: g.opts.map(([label, add], i) => { const on = s.sel[g.key] === i; return { label, hasAdd: add > 0, add: "+" + add.toLocaleString("ko-KR") + "원", bg: on ? "#ffffff" : "#f2f2f2", fg: on ? accent : "#666666", ring: on ? "inset 0 0 0 1.5px " + accent : "none", pick: () => this.setState(st => ({ sel: { ...st.sel, [g.key]: i } })) }; }) })),
+      trackX: "translateX(-" + (cur * 100) + "%)",
+      slides: all.map((src, i) => ({ src, bg: 'url("' + src + '")', op: i === cur ? 1 : 0 })),
+      thumbs: all.map((src, i) => ({ src, bg: 'url("' + src + '")', n: i + 1, ring: "inset 0 0 0 1px rgba(20,37,29,0.08)", pick: () => { this.setState({ cur: i }); this.restart(); } })),
+      multi: all.length > 1,
+      prevImg: () => this.go(-1),
+      nextImg: () => this.go(1),
+      detailSlots: all.slice(0, n).map((src, i) => ({ src, n: i + 1 })),
+      detailMore: !s.detailOpen && all.length > 2,
+      detailLess: s.detailOpen && all.length > 2,
+      expandDetail: () => this.setState({ detailOpen: true }),
+      collapseDetail: () => this.setState({ detailOpen: false }),
+      cardRows: [{ k: "전월 실적 30만원 이상", v: "월 최대 15,000원 할인" }, { k: "전월 실적 70만원 이상", v: "월 최대 20,000원 할인" }, { k: "전월 실적 100만원 이상", v: "월 최대 25,000원 할인" }],
+      goBack: () => {
+        const ref = document.referrer;
+        let same = false;
+        try { same = !!ref && new URL(ref).origin === window.location.origin && ref !== window.location.href; } catch (e) {}
+        window.location.href = same ? ref : "rental.html";
+      },
+      share: () => this.setState({ shareOpen: true }),
+      shareOpen: !!s.shareOpen,
+      closeShare: () => this.setState({ shareOpen: false }),
+      shareCopy: () => {
+        const url = window.location.href;
+        const done = () => { this.setState({ copied: true, shareOpen: false }); clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ copied: false }), 2000); };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(() => { window.prompt("아래 링크를 복사하세요", url); });
+        else window.prompt("아래 링크를 복사하세요", url);
+      },
+      shareKakao: () => {
+        const url = window.location.href, title = (p.brand ? p.brand + " " : "") + p.name;
+        const K = window.Kakao, key = window.NETGO_KAKAO_KEY;
+        if (K && key) { try { if (!K.isInitialized()) K.init(key); K.Share.sendDefault({ objectType: "feed", content: { title, description: "넷고 가전 렌탈", imageUrl: p.img, link: { mobileWebUrl: url, webUrl: url } }, buttons: [{ title: "상품 보기", link: { mobileWebUrl: url, webUrl: url } }] }); this.setState({ shareOpen: false }); return; } catch (err) {} }
+        if (navigator.share) { navigator.share({ title, url }).catch(() => {}); this.setState({ shareOpen: false }); return; }
+        window.alert("카카오톡 바로 공유는 준비 중이에요. 링크를 복사해 카카오톡에 붙여넣어 주세요.");
+      },
+      shareSms: () => { const url = window.location.href; const body = encodeURIComponent(p.name + " " + url); window.location.href = (/iPhone|iPad|Mac/i.test(navigator.userAgent) ? "sms:&body=" : "sms:?body=") + body; this.setState({ shareOpen: false }); },
+      shareMore: () => { if (navigator.share) navigator.share({ title: p.name, url: window.location.href }).catch(() => {}); this.setState({ shareOpen: false }); },
+      hasNativeShare: typeof navigator !== "undefined" && !!navigator.share,
+      copied: s.copied,
+      toTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+      openKakao: () => { window.open("https://open.kakao.com/o/sAU2tjTi", "_blank", "noopener"); },
+      applied: !!s.applied,
+      applyLabel: s.applied ? "신청완료" : "렌탈신청",
+      applyBg: s.applied ? "#12855b" : "#e9ecea",
+      applyFg: s.applied ? "#ffffff" : "#4e6259",
+      fName: { val: s.name || "", on: e => this.setState({ name: e.target.value }), ring: !!(s.bad && s.bad.name) && !(s.name || "").trim() ? "inset 0 0 0 1.5px #d93b30" : "none" },
+      fPhone: { val: s.phone || "", on: e => { const dg = e.target.value.replace(/\D/g, "").slice(0, 11); const f = dg.length < 4 ? dg : dg.length < 8 ? dg.slice(0, 3) + "-" + dg.slice(3) : dg.slice(0, 3) + "-" + dg.slice(3, dg.length - 4) + "-" + dg.slice(-4); this.setState({ phone: f }); }, ring: !!(s.bad && s.bad.phone) && (s.phone || "").replace(/\D/g, "").length < 9 ? "inset 0 0 0 1.5px #d93b30" : "none" },
+      ...(() => { const nb = !!(s.bad && s.bad.name) && !(s.name || "").trim(), pb = !!(s.bad && s.bad.phone) && (s.phone || "").replace(/\D/g, "").length < 9; this._nb = nb; this._pb = pb; return {}; })(),
+      optErr: !!(s.bad && p.groups.some(g => s.bad[g.key] && s.sel[g.key] == null)),
+      formErr: this._nb || this._pb,
+      optSummary: p.groups.filter(g => s.sel[g.key] != null).map(g => g.opts[s.sel[g.key]][0]).join(" · "),
+      formOpen: !!s.formOpen,
+      subBg: (s.name || "").trim() && (s.phone || "").replace(/\D/g, "").length >= 9 ? "#12855b" : "#e9ecea",
+      subFg: (s.name || "").trim() && (s.phone || "").replace(/\D/g, "").length >= 9 ? "#ffffff" : "#8a948f",
+      closeForm: () => this.setState({ formOpen: false }),
+      apply: () => {
+        const bad = {}; p.groups.forEach(g => { bad[g.key] = s.sel[g.key] == null; });
+        if (Object.values(bad).some(Boolean)) return this.setState({ bad });
+        this.setState({ bad: {}, formOpen: true });
+      },
+      submit: () => {
+        const bad = { name: !(s.name || "").trim(), phone: (s.phone || "").replace(/\D/g, "").length < 9 };
+        if (bad.name || bad.phone) return this.setState({ bad });
+        const url = "https://script.google.com/macros/s/AKfycbxkJH1649bP4dellr0MbhcPM2IU9HmEn1eSCU1kXerOL3IzzdoCZo6t892AKEkc1p2Y/exec";
+        const payload = { type: "rental", name: s.name.trim(), phone: s.phone, brand: p.brand, rental: p.rental, product: p.name, model: p.model, options: p.groups.map(g => g.title + ": " + g.opts[s.sel[g.key]][0]).join(" / "), price: price.toLocaleString("ko-KR") + "원", submittedAt: new Date().toISOString() };
+        fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) }).catch(err => console.warn("sheet", err));
+        this.setState({ applied: true, bad: {}, formOpen: false });
+      },
+      callOpen: s.callOpen,
+      openCall: () => this.setState({ callOpen: true }),
+      closeCall: () => this.setState({ callOpen: false }),
+      cardOpen: s.cardOpen,
+      openCard: () => this.setState({ cardOpen: true }),
+      closeCard: () => this.setState({ cardOpen: false }),
+      stop: e => e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>

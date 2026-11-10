@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#ffffff; color:#14251d; font-family:Pretendard,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#12855b; text-decoration:none; }
+  a:hover { color:#0c6644; }
+  image-slot[id^="rental-p-"]::part(frame){background:transparent}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+<div style="width:100%; min-height:100vh; display:flex; flex-direction:column">
+  <header style="position:sticky; top:0; z-index:50; padding:12px 16px; background:#ffffff">
+    <div style="max-width:1080px; margin:0 auto; padding:12px 16px 12px 20px; border-radius:22px; display:flex; align-items:center; gap:18px">
+      <sc-if value="{{ inCat }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clearQ }}" aria-label="렌탈 홈으로" style="margin-right:auto; width:40px; height:40px; border:none; border-radius:50%; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#14251d" style-hover="background:rgba(20,37,29,0.06)"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M15 5l-7 7 7 7"></path></svg></button></sc-if>
+      <sc-if value="{{ showHow }}" hint-placeholder-val="{{ true }}"><a href="index.html" style="display:flex; align-items:center; gap:9px; margin-right:auto; color:#14251d">
+        <img src="assets/netgo-logo-green-mark.png" alt="넷고" style="width:24px; height:24px; display:block; object-fit:contain" />
+        <span style="font-size:19px; font-weight:600; letter-spacing:0.12em; display:inline-block; overflow:hidden; white-space:nowrap; max-width:{{ logoTextW }}; opacity:{{ logoTextOp }}; transition:max-width 0.3s ease, opacity 0.25s ease">NetGo</span>
+      </a></sc-if>
+      <nav style="display:flex; gap:22px; padding-right:16px; font-size:14px; font-weight:600; color:#4e6259">
+        <a href="index.html" style="color:inherit">인터넷</a><a href="index.html#how" style="color:inherit">신청방법</a><a href="rental-faq.html" style="color:inherit">FAQ</a>
+      </nav>
+    </div>
+  </header>
+  <main style="flex:1; padding:32px 20px 96px">
+    <div style="max-width:760px; margin:0 auto">
+      <label style="display:flex; align-items:center; gap:12px; padding:0 24px; height:56px; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.08), 0 4px 16px rgba(20,37,29,0.04)" style-focus-within="box-shadow:inset 0 0 0 1px rgba(20,37,29,0.06), 0 4px 12px #e3e7ec">
+        <input type="search" value="{{ qInput }}" onChange="{{ onQ }}" onKeyDown="{{ onQKey }}" placeholder="원하는 상품, 회사를 검색해 보세요" aria-label="가전 렌탈 검색" style="flex:1; min-width:0; height:100%; border:none; outline:none; background:transparent; font-family:inherit; font-size:15px; color:#14251d" />
+        <sc-if value="{{ hasQInput }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clearQ }}" aria-label="검색어 지우기" style="flex:none; width:22px; height:22px; padding:0; border:none; border-radius:50%; background:#e4e8e6; color:#8a948f; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+        <svg onClick="{{ runQ }}" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="flex:none; display:block; cursor:pointer"><circle cx="11" cy="11" r="6.5" fill="none" stroke="#8aa197" stroke-width="2"></circle><path d="M16 16l4 4" stroke="#8aa197" stroke-width="2" stroke-linecap="round"></path></svg>
+      </label>
+      <sc-if value="{{ searching }}" hint-placeholder-val="{{ false }}">
+        <section style="margin-top:48px">
+          <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:10px">
+            <div style="font-size:19px; font-weight:800; letter-spacing:-0.03em; color:#14251d">{{ qHeading }} <span style="color:#12855b">{{ qCount }}</span>개</div>
+            <button type="button" onClick="{{ clearQ }}" style="padding:4px 2px; border:none; background:transparent; color:#9aa8a1; font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline">다른 상품 보기</button>
+          </div>
+          <sc-if value="{{ qEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:40px; padding:48px 20px; border-radius:20px; background:#f3f5f7; text-align:center">
+              <div style="font-size:16px; font-weight:700; color:#3d4a44">검색 결과가 없어요.</div>
+              <div style="margin-top:8px; font-size:13.5px; line-height:1.6; color:#8a948f">브랜드나 제품 종류로 다시 검색해 보세요. 예: 코웨이 정수기, LG 세탁기</div>
+            </div>
+          </sc-if>
+          <div style="margin-top:22px; display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:40px 14px">
+            <sc-for list="{{ qItems }}" as="p" hint-placeholder-count="0">
+                <div role="button" onClick="{{ p.go }}" style="cursor:pointer; min-width:0; display:flex; flex-direction:column">
+                  <div style="position:relative; width:100%; aspect-ratio:1 / 1; border-radius:18px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.05); overflow:hidden; transition:transform 0.25s ease" style-hover="transform:translateY(-3px)">
+                    <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#b4bfba; font-size:12.5px; font-weight:600"><img src="assets/netgo-logo-green-mark-v2.png" alt="" style="width:28px; height:28px; opacity:0.25; display:block" />이미지 준비 중</div><img src="{{ p.img }}" alt="{{ p.n }}" loading="lazy" referrerpolicy="no-referrer" onError="{{ p.hideImg }}" style="position:absolute; inset:8%; width:84%; height:84%; object-fit:contain; display:block" />
+                  </div>
+                  <div style="margin-top:14px; font-size:12.5px; font-weight:600; letter-spacing:-0.01em; color:#9aa8a1">{{ p.co }}</div>
+                  <div style="margin-top:4px; font-size:15px; font-weight:700; letter-spacing:-0.02em; line-height:1.4; min-height:2.8em; color:#14251d; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:keep-all">{{ p.n }}</div>
+                  <div style="margin-top:8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:13px; font-weight:600; color:#9aa8a1"><span>{{ p.pl }}</span><span style="font-size:15px; font-weight:700; color:#4e6259">{{ p.p }}원</span></div>
+                  <sc-if value="{{ p.hasD }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:2px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:13px; font-weight:700; color:#e03a2f"><span>할인적용</span><span style="font-size:17px; font-weight:800; letter-spacing:-0.02em">{{ p.d }}원</span></div>
+                  </sc-if>
+                </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ qMore }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:48px; display:flex; justify-content:center">
+              <button type="button" onClick="{{ qMoreFn }}" style="display:flex; align-items:center; gap:6px; padding:14px 28px; border:none; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#14251d; font-size:14.5px; font-weight:700; cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px #12855b; color:#12855b">더 둘러보기<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 9l6 6 6-6"></path></svg></button>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+      <sc-if value="{{ browsing }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative; margin-top:56px; padding:22px 18px; border-radius:24px; background:#f3f5f7">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px 6px">
+          <div role="button" aria-label="정수기" onClick="{{ catPick.water }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciWp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fafbfc"></stop><stop offset="1" stop-color="#c0c6cd"></stop></linearGradient><linearGradient id="ciWp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9aa1a9"></stop><stop offset="1" stop-color="#7d858e"></stop></linearGradient><linearGradient id="ciWp3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9ecef"></stop><stop offset="1" stop-color="#d1d6dc"></stop></linearGradient></defs><rect x="18" y="6" width="28" height="52" rx="5" fill="url(#ciWp1)"></rect><rect x="18" y="6" width="28" height="14" rx="5" fill="url(#ciWp3)"></rect><rect x="18" y="15" width="28" height="5" fill="url(#ciWp3)"></rect><circle cx="27" cy="13" r="2" fill="#4a4f57"></circle><circle cx="34" cy="13" r="2" fill="#7fb8ec"></circle><rect x="28" y="24" width="8" height="7" rx="2" fill="url(#ciWp2)"></rect><path d="M32 34c2 2.6 3 4.2 3 5.6a3 3 0 0 1-6 0c0-1.4 1-3 3-5.6z" fill="#7fb8ec"></path><rect x="22" y="47" width="20" height="4" rx="2" fill="#4a4f57"></rect></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">정수기</span>
+          </div>
+          <div role="button" aria-label="세탁기" onClick="{{ catPick.washer }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciWm1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#c8cdd3"></stop></linearGradient><linearGradient id="ciWm2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9cfd5"></stop><stop offset="1" stop-color="#a7aeb6"></stop></linearGradient><linearGradient id="ciWm3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a6470"></stop><stop offset="1" stop-color="#39414b"></stop></linearGradient></defs><rect x="10" y="7" width="44" height="51" rx="6" fill="url(#ciWm1)"></rect><rect x="10" y="7" width="44" height="10" rx="6" fill="#f1f3f5"></rect><rect x="10" y="13" width="44" height="4" fill="#f1f3f5"></rect><rect x="15" y="10.5" width="12" height="3" rx="1.5" fill="#a7aeb6"></rect><circle cx="44" cy="12" r="2.2" fill="#ffffff"></circle><circle cx="32" cy="37.5" r="15" fill="url(#ciWm2)"></circle><circle cx="32" cy="37.5" r="10.5" fill="url(#ciWm3)"></circle><path d="M21.5 39c3.5-2.4 6.8 2.4 10.5 0s7-2.4 10.5 0V40a10.5 10.5 0 0 1-21 0z" fill="#7a8794"></path><circle cx="28" cy="33" r="2" fill="#ffffff" opacity="0.8"></circle></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">세탁기</span>
+          </div>
+          <div role="button" aria-label="공기청정기" onClick="{{ catPick.air }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciAp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#e3e6e9"></stop></linearGradient><linearGradient id="ciAp2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a6068"></stop><stop offset="1" stop-color="#3a3f46"></stop></linearGradient></defs><rect x="17" y="6" width="30" height="52" rx="6" fill="url(#ciAp1)"></rect><rect x="17" y="6" width="30" height="12" rx="6" fill="url(#ciAp2)"></rect><rect x="17" y="12" width="30" height="6" fill="url(#ciAp2)"></rect><rect x="22" y="9.5" width="20" height="2" rx="1" fill="#ffffff" opacity="0.7"></rect><rect x="23" y="25" width="18" height="2.6" rx="1.3" fill="#c4c9cf"></rect><rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#c4c9cf"></rect><rect x="23" y="37" width="18" height="2.6" rx="1.3" fill="#c4c9cf"></rect><rect x="23" y="43" width="18" height="2.6" rx="1.3" fill="#c4c9cf"></rect><circle cx="32" cy="51.5" r="2.2" fill="#5fd3a5"></circle></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">공기청정기</span>
+          </div>
+          <div role="button" aria-label="인덕션" onClick="{{ catPick.induction }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciIn1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a5f78"></stop><stop offset="1" stop-color="#3a3f56"></stop></linearGradient><linearGradient id="ciIn2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a6b"></stop><stop offset="1" stop-color="#ff6f91"></stop></linearGradient><linearGradient id="ciIn3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd36b"></stop><stop offset="1" stop-color="#ffa25c"></stop></linearGradient><linearGradient id="ciIn4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9dcf0"></stop><stop offset="1" stop-color="#b9bde0"></stop></linearGradient></defs><rect x="7" y="16" width="50" height="34" rx="6" fill="url(#ciIn4)"></rect><rect x="7" y="14" width="50" height="32" rx="6" fill="url(#ciIn1)"></rect><circle cx="22" cy="28" r="8.5" fill="none" stroke="url(#ciIn2)" stroke-width="3"></circle><circle cx="22" cy="28" r="3.5" fill="url(#ciIn2)" opacity="0.55"></circle><circle cx="43" cy="28" r="6.5" fill="none" stroke="url(#ciIn3)" stroke-width="2.6"></circle><rect x="16" y="40" width="7" height="2.4" rx="1.2" fill="#ffffff" opacity="0.55"></rect><circle cx="40" cy="41.2" r="1.6" fill="#7fe3c4"></circle><circle cx="45" cy="41.2" r="1.6" fill="#ffffff" opacity="0.6"></circle><circle cx="50" cy="41.2" r="1.6" fill="#ffffff" opacity="0.6"></circle></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">인덕션</span>
+          </div>
+          <div role="button" aria-label="식기세척기" onClick="{{ catPick.dish }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciDw1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f8f9"></stop><stop offset="1" stop-color="#dfe3e7"></stop></linearGradient><linearGradient id="ciDw2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a4f57"></stop><stop offset="1" stop-color="#2f343b"></stop></linearGradient><linearGradient id="ciDw3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#e3e7eb"></stop></linearGradient></defs><rect x="10" y="8" width="44" height="50" rx="6" fill="url(#ciDw1)"></rect><rect x="10" y="8" width="44" height="11" rx="6" fill="url(#ciDw2)"></rect><rect x="10" y="14" width="44" height="5" fill="url(#ciDw2)"></rect><circle cx="44" cy="13.5" r="2" fill="#ffffff"></circle><rect x="16" y="24" width="32" height="27" rx="3" fill="url(#ciDw3)"></rect><circle cx="26" cy="37.5" r="6.5" fill="#ffffff"></circle><circle cx="26" cy="37.5" r="3" fill="#d5dae0"></circle><circle cx="39" cy="37.5" r="6.5" fill="#ffffff"></circle><circle cx="39" cy="37.5" r="3" fill="#c9e6f7"></circle><rect x="24" y="21" width="16" height="2" rx="1" fill="#2f343b"></rect></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">식기세척기</span>
+          </div>
+          <div role="button" aria-label="비데" onClick="{{ catPick.bidet }}" style="flex:1 1 0; min-width:76px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 0; border-radius:16px; transition:transform 0.2s ease, background 0.2s ease" style-hover="transform:translateY(-3px); background:rgba(255,255,255,0.7)">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true" style="display:block"><defs><linearGradient id="ciBd1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f5f7"></stop><stop offset="1" stop-color="#c3c8cf"></stop></linearGradient><linearGradient id="ciBd2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#c8cdd3"></stop></linearGradient><linearGradient id="ciBd3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#cdd2d8"></stop><stop offset="1" stop-color="#b3b9c1"></stop></linearGradient></defs><rect x="14" y="8" width="18" height="24" rx="4" fill="url(#ciBd1)"></rect><rect x="17" y="12" width="7" height="2.4" rx="1.2" fill="#8a929c"></rect><path d="M12 30h40c0 9.5-6.5 16-14 17.5V54a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2v-6.5C17.5 46 12 39.5 12 30z" fill="url(#ciBd2)"></path><path d="M12 30h40c0 3-1 5-2 6.5H14C13 35 12 33 12 30z" fill="url(#ciBd3)"></path><ellipse cx="32" cy="30" rx="20" ry="4" fill="url(#ciBd1)"></ellipse><circle cx="47" cy="22" r="3" fill="#7fb8ec"></circle></svg>
+            <span style="font-size:14px; font-weight:600; letter-spacing:-0.02em; color:#3d4a44; white-space:nowrap">비데</span>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ false }}">
+        <section style="margin-top:72px">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px">
+            <h3 style="margin:0; font-size:19px; font-weight:800; letter-spacing:-0.03em; color:#14251d">최근 본 상품</h3>
+            <button type="button" onClick="{{ clearRecent }}" style="padding:4px 2px; border:none; background:transparent; color:#9aa8a1; font-size:12.5px; font-weight:600; cursor:pointer; text-decoration:underline">전체 삭제</button>
+          </div>
+          <div style="margin:16px -20px 0; padding:4px 20px 8px; display:flex; gap:12px; overflow-x:auto; scrollbar-width:none">
+            <sc-for list="{{ recent }}" as="r" hint-placeholder-count="0">
+              <div role="button" onClick="{{ r.go }}" style="flex:0 0 132px; min-width:0; cursor:pointer">
+                <div style="position:relative; width:100%; aspect-ratio:1 / 1; border-radius:16px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.05); overflow:hidden; transition:transform 0.25s ease" style-hover="transform:translateY(-3px)">
+                  <span style="position:absolute; inset:8%; background-image:{{ r.bg }}; background-size:contain; background-position:center; background-repeat:no-repeat"></span>
+                  <button type="button" onClick="{{ r.remove }}" aria-label="최근 본 상품에서 삭제" style="position:absolute; top:6px; right:6px; width:22px; height:22px; padding:0; border:none; border-radius:50%; background:rgba(20,37,29,0.06); color:#8aa197; display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="color:#14251d"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+                </div>
+                <div style="margin-top:10px; font-size:12px; font-weight:600; color:#9aa8a1">{{ r.co }}</div>
+                <div style="margin-top:2px; font-size:13.5px; font-weight:700; line-height:1.4; letter-spacing:-0.02em; color:#14251d; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden">{{ r.n }}</div>
+                <div style="margin-top:4px; font-size:13.5px; font-weight:800; color:#14251d">월 {{ r.p }}원</div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+      <div style="margin-top:80px">
+        <div style="border-bottom:1px solid #e3e8e5; overflow-x:auto; scrollbar-width:none">
+          <div style="display:flex; justify-content:space-between; gap:20px; min-width:max-content; width:100%">
+            <sc-for list="{{ secTabs }}" as="st" hint-placeholder-count="7">
+              <button type="button" onClick="{{ st.pick }}" style="position:relative; padding:{{ st.pad }}; border:none; background:transparent; color:{{ st.fg }}; font-size:16px; font-weight:{{ st.fw }}; letter-spacing:-0.02em; cursor:pointer; white-space:nowrap; transition:color 0.2s ease" style-hover="color:#14251d">{{ st.label }}<sc-if value="{{ st.on }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="position:absolute; left:0; right:0; bottom:0; height:7px; pointer-events:none; background:linear-gradient(to top, rgba(18,133,91,0.13), rgba(18,133,91,0)); -webkit-mask-image:linear-gradient(to right, transparent, #000 18%, #000 82%, transparent); mask-image:linear-gradient(to right, transparent, #000 18%, #000 82%, transparent)"></span></sc-if></button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top:32px">
+        <sc-for list="{{ realSecs }}" as="sec" hint-placeholder-count="1">
+          <section id="{{ sec.key }}">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px">
+              <div style="display:flex; flex-wrap:wrap; gap:8px">
+                <sc-for list="{{ sec.tabs }}" as="t" hint-placeholder-count="6">
+                  <button type="button" onClick="{{ t.pick }}" style="padding:9px 16px; border:none; border-radius:999px; background:{{ t.bg }}; color:{{ t.fg }}; box-shadow:{{ t.ring }}; font-size:13.5px; font-weight:700; cursor:pointer; transition:background 0.2s ease, color 0.2s ease">{{ t.label }}</button>
+                </sc-for>
+              </div>
+              <div style="margin-left:auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:10px">
+  <span style="font-size:13px; font-weight:600; color:#9aa8a1">{{ sec.count }}개 상품</span>
+              <button type="button" onClick="{{ sec.toggleF }}" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:none; border-radius:10px; background:#f2f4f3; color:#14251d; font-size:13px; font-weight:700; cursor:pointer" style-hover="background:#e8ece9"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M4 6h16M7 12h10M10 18h4"></path></svg><sc-if value="{{ sec.fOff }}" hint-placeholder-val="{{ true }}"><span>필터</span></sc-if></button>
+              <sc-for list="{{ sec.selChips }}" as="k" hint-placeholder-count="0">
+                <span style="display:flex; align-items:center; gap:4px; padding:6px 8px 6px 12px; border-radius:999px; background:#e4e8e6; color:#3d4a44; font-size:12.5px; font-weight:700">{{ k.label }}<button type="button" onClick="{{ k.remove }}" aria-label="필터 삭제" style="width:18px; height:18px; padding:0; border:none; border-radius:50%; background:transparent; color:#a9b3ae; display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="color:#3d4a44; background:rgba(20,37,29,0.08)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" style="display:block"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+              </sc-for>
+              <sc-if value="{{ sec.fOn }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ sec.resetF }}" style="padding:8px 6px; border:none; background:transparent; color:#8aa197; font-size:12.5px; font-weight:600; cursor:pointer; text-decoration:underline">초기화</button></sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ sec.fOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:12px; padding:18px 20px; border-radius:16px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.08); display:grid; gap:16px">
+                <sc-if value="{{ sec.hasRc }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; align-items:start">
+                    <div style="padding-top:6px; font-size:13px; font-weight:800; color:#14251d">렌탈사</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px">
+                      <sc-for list="{{ sec.rcs }}" as="b" hint-placeholder-count="3">
+                        <button type="button" onClick="{{ b.pick }}" style="padding:6px 12px; border:none; border-radius:999px; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.ring }}; font-size:12.5px; font-weight:600; cursor:pointer; display:flex; align-items:baseline; gap:4px"><span>{{ b.name }}</span><span style="color:{{ b.cntFg }}; font-weight:500">{{ b.cnt }}</span></button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+                <div style="display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; align-items:start">
+                  <div style="padding-top:6px; font-size:13px; font-weight:800; color:#14251d">브랜드</div>
+                  <div style="display:flex; flex-wrap:wrap; gap:6px">
+                    <sc-for list="{{ sec.brands }}" as="b" hint-placeholder-count="6">
+                      <button type="button" onClick="{{ b.pick }}" style="padding:6px 12px; border:none; border-radius:999px; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.ring }}; font-size:12.5px; font-weight:600; cursor:pointer; display:flex; align-items:baseline; gap:4px"><span>{{ b.name }}</span><span style="color:{{ b.cntFg }}; font-weight:500">{{ b.cnt }}</span></button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; align-items:start">
+                  <div style="padding-top:6px; font-size:13px; font-weight:800; color:#14251d">렌탈료</div>
+                  <div style="display:flex; flex-wrap:wrap; gap:6px">
+                    <sc-for list="{{ sec.prices }}" as="b" hint-placeholder-count="6">
+                      <button type="button" onClick="{{ b.pick }}" style="padding:6px 12px; border:none; border-radius:999px; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.ring }}; font-size:12.5px; font-weight:600; cursor:pointer; display:flex; align-items:baseline; gap:4px"><span>{{ b.name }}</span><span style="color:{{ b.cntFg }}; font-weight:500">{{ b.cnt }}</span></button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+            <div style="margin-top:22px; display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:40px 14px">
+              <sc-for list="{{ sec.items }}" as="p" hint-placeholder-count="8">
+                <div role="button" onClick="{{ p.go }}" style="cursor:pointer; min-width:0; display:flex; flex-direction:column">
+                  <div style="position:relative; width:100%; aspect-ratio:1 / 1; border-radius:18px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.05); overflow:hidden; transition:transform 0.25s ease" style-hover="transform:translateY(-3px)">
+                    <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#b4bfba; font-size:12.5px; font-weight:600"><img src="assets/netgo-logo-green-mark-v2.png" alt="" style="width:28px; height:28px; opacity:0.25; display:block" />이미지 준비 중</div><img src="{{ p.img }}" alt="{{ p.n }}" loading="lazy" referrerpolicy="no-referrer" onError="{{ p.hideImg }}" style="position:absolute; inset:8%; width:84%; height:84%; object-fit:contain; display:block" />
+                  </div>
+                  <div style="margin-top:14px; font-size:12.5px; font-weight:600; letter-spacing:-0.01em; color:#9aa8a1">{{ p.co }}</div>
+                  <div style="margin-top:4px; font-size:15px; font-weight:700; letter-spacing:-0.02em; line-height:1.4; min-height:2.8em; color:#14251d; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:keep-all">{{ p.n }}</div>
+                  <div style="margin-top:8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:13px; font-weight:600; color:#9aa8a1"><span>{{ p.pl }}</span><span style="font-size:15px; font-weight:700; color:#4e6259">{{ p.p }}원</span></div>
+                  <sc-if value="{{ p.hasD }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:2px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:13px; font-weight:700; color:#e03a2f"><span>할인적용</span><span style="font-size:17px; font-weight:800; letter-spacing:-0.02em">{{ p.d }}원</span></div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ sec.hasMore }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:48px; display:flex; justify-content:center">
+                <button type="button" onClick="{{ sec.more }}" style="display:flex; align-items:center; gap:6px; padding:14px 28px; border:none; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#14251d; font-size:14.5px; font-weight:700; cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px #12855b; color:#12855b">더 둘러보기<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 9l6 6 6-6"></path></svg></button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ sec.canLess }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:48px; display:flex; justify-content:center">
+                <button type="button" onClick="{{ sec.less }}" style="display:flex; align-items:center; gap:6px; padding:14px 28px; border:none; border-radius:999px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(20,37,29,0.1); color:#14251d; font-size:14.5px; font-weight:700; cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px #12855b; color:#12855b">간략하게<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 15l6-6 6 6"></path></svg></button>
+              </div>
+            </sc-if>
+          </section>
+        </sc-for>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ showHow }}" hint-placeholder-val="{{ true }}">
+      <section id="how" style="margin-top:96px">
+        <div style="max-width:1080px; margin:0 auto">
+          <div style="text-align:center; max-width:520px; margin:0 auto">
+            <div style="font-size:13.5px; font-weight:800; color:#12855b">신청 방법</div>
+            <h2 style="margin:12px 0 0; font-size:clamp(26px,3.6vw,40px); line-height:1.24; letter-spacing:-0.04em; font-weight:800">가장 간편한 방법으로 진행되는</h2>
+          </div>
+          <div style="margin:32px auto 0; max-width:392px; position:relative; display:grid; gap:27px; padding-left:38px; border-left:2px dashed #d4d4d4">
+            <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+              <div style="position:relative; padding:26px 22px; border-radius:26px; background:#ffffff">
+                <div style="position:absolute; left:-49px; top:26px; width:20px; height:20px; border-radius:50%; background:{{ st.dot }}; border:4px solid #ffffff; box-shadow:{{ st.glow }}; transition:background 1.4s ease-in-out, box-shadow 1.4s ease-in-out"></div>
+                <div style="opacity:{{ st.op }}; transform:{{ st.scale }}; transform-origin:left center; transition:opacity 0.8s ease, transform 0.8s cubic-bezier(.22,.8,.3,1)">
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="font-size:13px; font-weight:800; letter-spacing:0.06em; color:#12855b">STEP {{ st.no }}</div>
+                  <div style="margin-left:auto; display:flex; align-items:center; gap:5px; font-size:12.5px; font-weight:400; color:#8aa197">
+                    <sc-if value="{{ st.clock }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="display:block">
+                      <circle cx="12" cy="12" r="9"></circle>
+                      <path d="M12 7.4V12l3.2 2"></path>
+                    </svg></sc-if>
+                    <span>{{ st.time }}</span>
+                  </div>
+                </div>
+                <div style="margin-top:14px; font-size:16.5px; font-weight:800; letter-spacing:-0.02em">{{ st.title }}</div>
+                <div style="margin-top:8px; font-size:14px; line-height:1.66; color:#4e6259; text-wrap:pretty; white-space:pre-line">{{ st.body }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+      </sc-if>
+      <section style="margin-top:96px">
+        <div style="text-align:center">
+          <div style="font-size:13.5px; font-weight:800; color:#12855b">FAQ</div>
+          <h2 style="margin:10px 0 0; font-size:clamp(24px,3.4vw,32px); line-height:1.25; letter-spacing:-0.04em; font-weight:800">자주 묻는 질문</h2>
+        </div>
+        <div style="margin-top:32px; display:grid; gap:12px">
+        <div style="border-radius:18px; background:#fff; border:1px solid rgba(20,37,29,0.07); box-shadow:0 2px 8px rgba(20,37,29,0.03)">
+          <button type="button" onClick="{{ t1 }}" style="width:100%; padding:22px 24px; border:none; background:transparent; display:flex; align-items:center; gap:14px; text-align:left; cursor:pointer; color:#14251d; font-family:inherit">
+            <span style="flex:none; font-size:15px; font-weight:800; color:#12855b">Q</span>
+            <span style="flex:1; font-size:16.5px; font-weight:700; letter-spacing:-0.02em; line-height:1.45">렌탈 기간은 얼마나 되나요?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8aa197" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; display:block; transition:transform 0.35s ease; transform:{{ r1 }}"><path d="M6 9l6 6 6-6"></path></svg>
+          </button>
+          <div style="display:grid; grid-template-rows:{{ g1 }}; opacity:{{ op1 }}; transition:grid-template-rows 0.4s cubic-bezier(.22,.8,.3,1), opacity 0.3s ease">
+            <div style="overflow:hidden; min-height:0">
+              <div style="padding:0 24px 24px 53px; font-size:15px; line-height:1.75; color:#4e6259; text-wrap:pretty">제품과 브랜드에 따라 3년~6년 약정으로 선택하실 수 있습니다. 상담을 통해 사용 환경에 맞는 기간을 안내해 드립니다.</div>
+            </div>
+          </div>
+        </div>
+        <div style="border-radius:18px; background:#fff; border:1px solid rgba(20,37,29,0.07); box-shadow:0 2px 8px rgba(20,37,29,0.03)">
+          <button type="button" onClick="{{ t2 }}" style="width:100%; padding:22px 24px; border:none; background:transparent; display:flex; align-items:center; gap:14px; text-align:left; cursor:pointer; color:#14251d; font-family:inherit">
+            <span style="flex:none; font-size:15px; font-weight:800; color:#12855b">Q</span>
+            <span style="flex:1; font-size:16.5px; font-weight:700; letter-spacing:-0.02em; line-height:1.45">렌탈 기간 중 관리 서비스도 받을 수 있나요?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8aa197" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; display:block; transition:transform 0.35s ease; transform:{{ r2 }}"><path d="M6 9l6 6 6-6"></path></svg>
+          </button>
+          <div style="display:grid; grid-template-rows:{{ g2 }}; opacity:{{ op2 }}; transition:grid-template-rows 0.4s cubic-bezier(.22,.8,.3,1), opacity 0.3s ease">
+            <div style="overflow:hidden; min-height:0">
+              <div style="padding:0 24px 24px 53px; font-size:15px; line-height:1.75; color:#4e6259; text-wrap:pretty">정기 방문 관리와 필터 교체 등 제품별 관리 서비스가 렌탈료에 포함되어 있습니다.</div>
+            </div>
+          </div>
+        </div>
+        <div style="border-radius:18px; background:#fff; border:1px solid rgba(20,37,29,0.07); box-shadow:0 2px 8px rgba(20,37,29,0.03)">
+          <button type="button" onClick="{{ t3 }}" style="width:100%; padding:22px 24px; border:none; background:transparent; display:flex; align-items:center; gap:14px; text-align:left; cursor:pointer; color:#14251d; font-family:inherit">
+            <span style="flex:none; font-size:15px; font-weight:800; color:#12855b">Q</span>
+            <span style="flex:1; font-size:16.5px; font-weight:700; letter-spacing:-0.02em; line-height:1.45">인터넷과 함께 가입하면 혜택이 더 있나요?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8aa197" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; display:block; transition:transform 0.35s ease; transform:{{ r3 }}"><path d="M6 9l6 6 6-6"></path></svg>
+          </button>
+          <div style="display:grid; grid-template-rows:{{ g3 }}; opacity:{{ op3 }}; transition:grid-template-rows 0.4s cubic-bezier(.22,.8,.3,1), opacity 0.3s ease">
+            <div style="overflow:hidden; min-height:0">
+              <div style="padding:0 24px 24px 53px; font-size:15px; line-height:1.75; color:#4e6259; text-wrap:pretty">인터넷과 가전 렌탈을 함께 가입하시면 추가 현금 혜택과 사은품을 받으실 수 있습니다. 자세한 금액은 상담을 통해 안내해 드립니다.</div>
+            </div>
+          </div>
+        </div>
+        <div style="border-radius:18px; background:#fff; border:1px solid rgba(20,37,29,0.07); box-shadow:0 2px 8px rgba(20,37,29,0.03)">
+          <button type="button" onClick="{{ t4 }}" style="width:100%; padding:22px 24px; border:none; background:transparent; display:flex; align-items:center; gap:14px; text-align:left; cursor:pointer; color:#14251d; font-family:inherit">
+            <span style="flex:none; font-size:15px; font-weight:800; color:#12855b">Q</span>
+            <span style="flex:1; font-size:16.5px; font-weight:700; letter-spacing:-0.02em; line-height:1.45">약정 기간이 끝나면 제품은 어떻게 되나요?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8aa197" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; display:block; transition:transform 0.35s ease; transform:{{ r4 }}"><path d="M6 9l6 6 6-6"></path></svg>
+          </button>
+          <div style="display:grid; grid-template-rows:{{ g4 }}; opacity:{{ op4 }}; transition:grid-template-rows 0.4s cubic-bezier(.22,.8,.3,1), opacity 0.3s ease">
+            <div style="overflow:hidden; min-height:0">
+              <div style="padding:0 24px 24px 53px; font-size:15px; line-height:1.75; color:#4e6259; text-wrap:pretty">약정 기간이 끝나면 제품 소유권이 고객님께 이전되며, 원하시면 새 제품으로 재렌탈도 가능합니다.</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer style="padding:36px 20px 33px; background:#12855b">
+    <div style="max-width:1080px; margin:0 auto; padding:12px 28px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:16px; font-size:13px; line-height:1.6; color:rgba(255,255,255,0.82)">
+      <div>
+        <div style="display:flex; align-items:center; gap:9px">
+          <img src="assets/netgo-logo-green-mark-v2.png" alt="넷고" style="width:24px; height:24px; display:block; object-fit:contain" />
+          <span style="font-size:17px; font-weight:500; letter-spacing:0.12em; color:#ffffff">NetGo</span>
+        </div>
+      </div>
+      <div>상호 넷고 (NetGo)<br />사업자등록번호 558-29-01891<br />통신판매업신고 제2026-경기양주-1222호</div>
+      <div><a href="index.html#apply" style="color:#ffffff; font-weight:700">상담 신청</a><br />070-4647-1124<br />평일 09:00-18:00</div>
+    </div>
+    <div style="max-width:1080px; margin:8px auto 0; padding:12px 28px 0; border-top:1px solid rgba(255,255,255,0.2); font-size:12px; color:rgba(255,255,255,0.66)">Copyright © NetGo. All rights reserved</div>
+  </footer>
+  <div style="position:fixed; right:18px; bottom:18px; z-index:60; display:flex; flex-direction:column; gap:10px">
+    <button type="button" onClick="{{ toTop }}" aria-label="맨 위로" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#ffffff; color:#14251d; box-shadow:0 6px 18px rgba(20,37,29,0.14), inset 0 0 0 1px rgba(20,37,29,0.08); display:flex; align-items:center; justify-content:center; transition:transform 0.2s ease" style-hover="transform:scale(1.06)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M6 15l6-6 6 6"></path></svg></button>
+    <button type="button" onClick="{{ openKakao }}" aria-label="카카오톡 채널 상담" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#FEE500; color:#191919; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.16)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,0.2)">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="display:block"><path fill="#191919" d="M12 3.6c-5 0-9 3.1-9 7 0 2.5 1.7 4.7 4.2 6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.3 0 .7.1 1 .1 5 0 9-3.1 9-7s-4-7.3-9-7.3z"></path></svg>
+    </button>
+    <button type="button" onClick="{{ openCall }}" aria-label="전화 상담 070-4647-1124" style="width:46px; height:46px; padding:0; border:none; cursor:pointer; border-radius:50%; background:#0c6644; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(12,102,68,0.34)" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(12,102,68,0.42)">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="display:block"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"></path></svg>
+    </button>
+  </div>
+  <sc-if value="{{ callOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCall }}" style="position:fixed; inset:0; z-index:80; background:rgba(20,37,29,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px">
+      <div role="dialog" aria-modal="true" aria-label="전화 상담" onClick="{{ stop }}" style="width:100%; max-width:340px; padding:30px 26px 24px; border-radius:24px; background:#fff; box-shadow:0 24px 60px rgba(20,37,29,0.25); text-align:center">
+        <div style="font-size:14px; font-weight:700; color:#8aa197">전화 상담</div>
+        <div style="margin-top:8px; font-size:28px; font-weight:800; letter-spacing:-0.03em; color:#14251d">070-4647-1124</div>
+        <div style="margin-top:6px; font-size:13px; color:#8aa197">평일 09:00 - 18:00</div>
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <button type="button" onClick="{{ closeCall }}" style="padding:15px; border:none; border-radius:14px; background:#f2f2f2; color:#3d3d3d; font-size:15px; font-weight:700; cursor:pointer">닫기</button>
+          <a href="tel:070-4647-1124" target="_top" style="display:flex; align-items:center; justify-content:center; text-align:center; padding:15px; border-radius:14px; background:#0c6644; color:#fff; font-size:15px; font-weight:700">전화 연결</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: 0, showAll: false, stepFocus: 0 };
+  componentDidMount() {
+    this._onScrollLogo = () => { const s = window.scrollY > 40; if (s !== !!this.state.scrolledTop) this.setState({ scrolledTop: s }); };
+    window.addEventListener("scroll", this._onScrollLogo, { passive: true }); this._onScrollLogo();
+    try { this.setState({ recentList: JSON.parse(localStorage.getItem("netgo-recent") || "[]") }); } catch (e) {}
+    let saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem("netgo-rental-view") || "null"); sessionStorage.removeItem("netgo-rental-view"); } catch (e) {}
+    fetch("data/rental-products.json").then(r => r.json()).then(products => {
+      if (saved) {
+        this.setState({ products, secTab: saved.secTab, tabSel: saved.tabSel || {}, shown: saved.shown || {}, filt: saved.filt || {}, q: saved.q || "", qInput: saved.qTitle ? "" : (saved.q || ""), qTitle: saved.qTitle || "" }, () => {
+          const y = saved.y || 0; let tries = 0;
+          const tick = () => { window.scrollTo(0, y); if (Math.abs(window.scrollY - y) > 4 && tries++ < 20) setTimeout(tick, 80); };
+          requestAnimationFrame(tick);
+        });
+      } else this.setState({ products });
+    }).catch(() => {}); this._stepTimer = setInterval(() => this.setState(s => ({ stepFocus: (s.stepFocus + 1) % 3 })), 2800); }
+  componentWillUnmount() { window.removeEventListener("scroll", this._onScrollLogo); clearInterval(this._stepTimer); }
+  renderVals() {
+    const hide = e => { e.currentTarget.style.display = "none"; };
+    const o = this.state.open, v = {};
+    [1, 2, 3, 4].forEach(n => {
+      v["g" + n] = o === n ? "1fr" : "0fr";
+      v["op" + n] = o === n ? 1 : 0;
+      v["r" + n] = o === n ? "rotate(180deg)" : "rotate(0deg)";
+      v["t" + n] = () => this.setState(s => ({ open: s.open === n ? 0 : n }));
+    });
+    const data = [
+      ["식기세척기", [["12인용 빌트인 식기세척기", ["12인용", "빌트인"], "39,900", "설치비 무료"], ["6인용 프리스탠딩 식기세척기", ["6인용", "설치 간편"], "24,900", "첫 달 렌탈료 면제"], ["14인용 건조 강화 식기세척기", ["14인용", "자동 건조"], "45,900", "인터넷 결합 시 추가 할인"], ["3인용 미니 식기세척기", ["3인용", "1인 가구"], "17,900", "설치비 무료"]]],
+      ["정수기", [["직수 냉온정 정수기", ["직수", "냉온정"], "29,900", "인터넷 결합 시 추가 할인"], ["얼음 정수기", ["얼음", "직수"], "44,900", "첫 달 렌탈료 면제"], ["슬림 직수 정수기", ["직수", "슬림"], "19,900", "설치비 무료"], ["스스로 살균 정수기", ["살균", "냉정"], "27,900", "사은품 증정"]]],
+      ["세탁기", [["24kg 드럼 세탁기", ["24kg", "드럼"], "36,900", "설치비 무료"], ["세탁건조기 일체형", ["세탁+건조", "올인원"], "69,900", "인터넷 결합 시 추가 할인"], ["21kg 통돌이 세탁기", ["21kg", "통돌이"], "22,900", "첫 달 렌탈료 면제"], ["미니 드럼 세탁기", ["4kg", "아기옷"], "15,900", "사은품 증정"]]],
+      ["공기청정기", [["대형 공기청정기 50평형", ["50평형", "대형"], "34,900", "필터 교체 무료"], ["원형 공기청정기", ["30평형", "360° 흡입"], "24,900", "첫 달 렌탈료 면제"], ["펫 전용 공기청정기", ["펫케어", "탈취"], "29,900", "인터넷 결합 시 추가 할인"], ["미니 공기청정기", ["10평형", "침실용"], "12,900", "설치비 무료"]]],
+      ["전자레인지", [["오븐 겸용 전자레인지", ["오븐", "32L"], "19,900", "첫 달 렌탈료 면제"], ["에어프라이 전자레인지", ["에어프라이", "28L"], "17,900", "사은품 증정"], ["빌트인 전자레인지", ["빌트인", "주방 일체"], "22,900", "설치비 무료"], ["심플 전자레인지", ["23L", "다이얼"], "8,900", "인터넷 결합 시 추가 할인"]]],
+      ["변기", [["일체형 비데 변기", ["비데 일체", "자동 세척"], "39,900", "설치비 무료"], ["스마트 비데", ["온수", "건조"], "19,900", "첫 달 렌탈료 면제"], ["살균 비데", ["UV 살균", "노즐 자동"], "22,900", "인터넷 결합 시 추가 할인"], ["슬림 비데", ["슬림", "절전"], "14,900", "사은품 증정"]]]
+    ];
+    const all = data.map(([name, items], ci) => ({ name, items: items.map(([n, badges, price, benefit], pi) => ({ name: n, brand: "회사" + "ABCD"[pi], price, benefit, ic: { install: benefit === "설치비 무료", month: benefit === "첫 달 렌탈료 면제", bundle: benefit.indexOf("결합") >= 0, gift: benefit === "사은품 증정", filter: benefit.indexOf("필터") >= 0 }, slot: "rental-p-" + ci + "-" + pi })) }));
+    v.steps = [
+      { no: "1", time: "1분", clock: true, title: "신청서 작성", body: "신청서를 작성하면 입력하신 연락처로\n전화 상담이 진행돼요." },
+      { no: "2", time: "30분", clock: true, title: "비교 견적 상담", body: "고객님의 사용 환경을 고려해 신청하신 상품과\n비교하여 결정 후 신청 및 결제까지 진행해드려요." },
+      { no: "3", time: "당일", clock: false, title: "설치 후 사은품 지급", body: "가입 확정 시 접수 후 설치 일정을 잡고,\n설치가 확인 되면 설치 당일 현금이 지급돼요." }
+    ].map((st, i) => { const on = i === this.state.stepFocus; return { ...st, op: on ? 1 : 0.42, scale: on ? "scale(1.04)" : "scale(1)", dot: on ? "#12855b" : "#c9c9c9", glow: on ? "0 0 10px 2px rgba(255,255,255,0.95), 0 0 16px 4px rgba(18,133,91,0.28)" : "0 0 0 0 rgba(255,255,255,0), 0 0 0 0 rgba(18,133,91,0)" }; });
+    v.cats = this.state.showAll ? all : all.slice(0, 2);
+    v.hasMore = !this.state.showAll;
+    v.more = () => this.setState({ showAll: true });
+    v.hasLess = !!this.state.showAll;
+    v.less = () => this.setState({ showAll: false });
+    const tabSel = this.state.tabSel || {}, shown = this.state.shown || {};
+    const prods = this.state.products || [];
+    const activeKey = this.state.secTab || (prods[0] && prods[0].key);
+    v.secTabs = prods.map((sc, i) => { const on = sc.key === activeKey; return { label: sc.title, pad: i === 0 ? "16px 8px 14px 0" : i === prods.length - 1 ? "16px 0 14px 8px" : "16px 8px 14px", fg: on ? "#14251d" : "#9aa8a1", fw: on ? 700 : 500, on, pick: () => this.setState({ secTab: sc.key }) }; });
+    v.realSecs = prods.filter(sc => sc.key === activeKey).map(sc => {
+      const tabs = ["전체"].concat(sc.order.filter(t => sc.items.some(x => x.c === t)));
+      const pt = tabSel[sc.key] || "전체";
+      const base = pt === "전체" ? sc.items : sc.items.filter(x => x.c === pt);
+      const F = { b: [], p: [], r: [], open: false, ...((this.state.filt || {})[sc.key] || {}) };
+      const PR = [["1만원이하", 0, 10000], ["1만원대", 10000, 20000], ["2만원대", 20000, 30000], ["3만원대", 30000, 40000], ["4~10만원", 40000, 100000], ["10만원이상", 100000, 1e12]];
+      const price = x => +String(x.d || x.p || "0").replace(/,/g, "");
+      const list = base.filter(x => (!F.r.length || (x.rc || []).some(q => F.r.includes(q))) && (!F.b.length || F.b.includes(x.co)) && (!F.p.length || F.p.some(l => { const r = PR.find(q => q[0] === l); const v = price(x); return v >= r[1] && v < r[2]; })));
+      const setF = patch => this.setState(st => { const all = st.filt || {}; const cur = { b: [], p: [], r: [], open: false, ...(all[sc.key] || {}) }; return { filt: { ...all, [sc.key]: { ...cur, ...patch } }, shown: { ...st.shown, [sc.key]: 8 } }; });
+      const tog = (arr, v) => arr.includes(v) ? arr.filter(q => q !== v) : arr.concat(v);
+      const chip = on => ({ bg: "#f1f2f1", fg: on ? "#12855b" : "#5f6b65", cntFg: on ? "#6fb894" : "#a9b3ae", ring: on ? "inset 0 0 0 1.5px #4e5a54" : "none" });
+      const okR = x => !F.r.length || (x.rc || []).some(q => F.r.includes(q));
+      const okB = x => !F.b.length || F.b.includes(x.co);
+      const okP = x => !F.p.length || F.p.some(l => { const r = PR.find(q => q[0] === l); const v = price(x); return v >= r[1] && v < r[2]; });
+      const bc = {}; base.filter(x => okR(x) && okP(x)).forEach(x => { if (x.co) bc[x.co] = (bc[x.co] || 0) + 1; });
+      F.b.forEach(b => { if (!bc[b]) bc[b] = 0; });
+      const pcBase = base.filter(x => okR(x) && okB(x));
+      const pc = {}; PR.forEach(([l, lo, hi]) => { pc[l] = pcBase.filter(x => { const v = price(x); return v >= lo && v < hi; }).length; });
+      const fCount = F.b.length + F.p.length + F.r.length;
+      const rcList = sc.rcDone || [];
+      const rcN = {}; base.filter(x => okB(x) && okP(x)).forEach(x => (x.rc || []).forEach(q => { rcN[q] = (rcN[q] || 0) + 1; }));
+      const n = shown[sc.key] || 8;
+      return {
+        key: sc.key, title: sc.title, count: list.length.toLocaleString("ko-KR"),
+        fOpen: !!F.open, fOn: fCount > 0, fOff: fCount === 0, fCount,
+        selChips: [].concat(F.r.map(v => ({ label: v, remove: () => setF({ r: F.r.filter(q => q !== v) }) })), F.b.map(v => ({ label: v, remove: () => setF({ b: F.b.filter(q => q !== v) }) })), F.p.map(v => ({ label: v, remove: () => setF({ p: F.p.filter(q => q !== v) }) }))),
+        toggleF: () => setF({ open: !F.open }),
+        resetF: () => setF({ b: [], p: [], r: [] }),
+        hasRc: rcList.length > 0,
+        rcs: rcList.map(label => ({ label, name: label, cnt: String(rcN[label] || 0), ...chip(F.r.includes(label)), pick: () => setF({ r: tog(F.r, label) }) })),
+        brands: Object.keys(bc).sort((a, b) => bc[b] - bc[a]).map(label => ({ label, name: label, cnt: String(bc[label]), ...chip(F.b.includes(label)), pick: () => setF({ b: tog(F.b, label) }) })),
+        prices: PR.filter(([label]) => pc[label] > 0 || F.p.includes(label)).map(([label]) => ({ label, name: label, cnt: String(pc[label]), ...chip(F.p.includes(label)), pick: () => setF({ p: tog(F.p, label) }) })),
+        tabs: tabs.map(label => { const on = label === pt; return { label, bg: on ? "linear-gradient(120deg, #d9f3e6 0%, #e3f1fb 55%, #ece6fb 100%)" : "#ffffff", fg: on ? "#3d4a44" : "#8a948f", ring: on ? "none" : "inset 0 0 0 1px rgba(20,37,29,0.1)", pick: () => this.setState(st => ({ tabSel: { ...st.tabSel, [sc.key]: label }, shown: { ...st.shown, [sc.key]: 8 } })) }; }),
+        items: list.slice(0, n).map(x => ({ ...x, pl: x.pl || "월 렌탈료", hasD: !!x.d, hideImg: hide, go: () => { try { const st = this.state; sessionStorage.setItem("netgo-rental-view", JSON.stringify({ secTab: st.secTab || activeKey, tabSel: st.tabSel || {}, shown: st.shown || {}, filt: st.filt || {}, y: window.scrollY })); } catch (e) {} window.location.href = "rental-product.html?no=" + x.no; } })),
+        hasMore: list.length > n,
+        canLess: n > 8,
+        more: () => this.setState(st => ({ shown: { ...st.shown, [sc.key]: n + 12 } })),
+        less: () => { this.setState(st => ({ shown: { ...st.shown, [sc.key]: 8 } })); const el = document.getElementById(sc.key); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" }); }
+      };
+    });
+    v.goDetail = () => { window.location.href = "rental-detail.html"; };
+    const rl = this.state.recentList || [];
+    const saveRl = list => { try { localStorage.setItem("netgo-recent", JSON.stringify(list)); } catch (e) {} this.setState({ recentList: list }); };
+    v.hasRecent = rl.length > 0;
+    v.recent = rl.map(r => ({ ...r, bg: 'url("' + r.img + '")', go: () => { window.location.href = "rental-product.html?no=" + r.no; }, remove: e => { e.stopPropagation(); saveRl(rl.filter(q => q.no !== r.no)); } }));
+    v.clearRecent = () => saveRl([]);
+    const qi = this.state.qInput || "", q = (this.state.q || "").trim();
+    v.qInput = qi; v.hasQInput = qi.length > 0;
+    v.onQ = e => { const val = e.target.value; this.setState({ qInput: val }); if (!val) this.setState({ q: "" }); };
+    v.runQ = () => { this.setState({ q: this.state.qInput || "", qTitle: "", qShow: 24 }); };
+    v.onQKey = e => { if (e.key === "Enter") { e.preventDefault(); v.runQ(); } };
+    v.clearQ = () => { this.setState({ q: "", qInput: "", qTitle: "" }); window.scrollTo({ top: 0, behavior: "smooth" }); };
+    v.searching = !!q; v.browsing = !q;
+    v.showHow = !(q && this.state.qTitle && !this.state.qInput);
+    v.inCat = !v.showHow;
+    const catKw = { water: ["정수기", "정수기"], washer: ["세탁기", "세탁기"], air: ["공기청정기", "청정기"], induction: ["인덕션", "인덕션"], dish: ["식기세척기", "식기세척기"], bidet: ["비데", "비데"] };
+    v.catPick = {}; Object.entries(catKw).forEach(([k, [label, kw]]) => { v.catPick[k] = () => { this.setState({ q: kw, qInput: "", qTitle: label, qShow: 24 }); window.scrollTo({ top: 0, behavior: "smooth" }); }; });
+    v.qHeading = this.state.qTitle && !this.state.qInput ? this.state.qTitle : "'" + q + "' 검색 결과";
+    if (q) {
+      const norm = s => String(s || "").toLowerCase().replace(/\s+/g, "");
+      const alias = { "엘지": "lg", "에스케이": "sk", "삼성전자": "삼성" };
+      const toks = q.toLowerCase().split(/\s+/).filter(Boolean).map(t => alias[t] || t);
+      const seen = new Set(), res = [];
+      prods.forEach(sc => sc.items.forEach(x => {
+        if (seen.has(x.no)) return;
+        const hay = norm([x.co, x.n, x.m, x.c, (x.rc || []).join(" "), sc.title].join(" "));
+        if (toks.every(t => hay.includes(norm(t)))) { seen.add(x.no); res.push(x); }
+      }));
+      const qs = this.state.qShow || 24;
+      v.qShown = q; v.qCount = res.length.toLocaleString("ko-KR"); v.qEmpty = res.length === 0;
+      v.qItems = res.slice(0, qs).map(x => ({ ...x, pl: x.pl || "월 렌탈료", hasD: !!x.d, hideImg: hide, go: () => { try { sessionStorage.setItem("netgo-rental-view", JSON.stringify({ secTab: this.state.secTab, tabSel: this.state.tabSel || {}, shown: this.state.shown || {}, filt: this.state.filt || {}, q, qTitle: this.state.qTitle || "", y: window.scrollY })); } catch (e) {} window.location.href = "rental-product.html?no=" + x.no; } }));
+      v.qMore = res.length > qs; v.qMoreFn = () => this.setState({ qShow: qs + 24 });
+    } else { v.qItems = []; v.qMore = false; v.qEmpty = false; }
+    v.logoTextW = this.state.scrolledTop ? "0px" : "90px"; v.logoTextOp = this.state.scrolledTop ? 0 : 1;
+    v.toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+    v.openKakao = () => { window.open("https://open.kakao.com/o/sAU2tjTi", "_blank", "noopener"); };
+    v.callOpen = !!this.state.callOpen;
+    v.openCall = () => this.setState({ callOpen: true });
+    v.closeCall = () => this.setState({ callOpen: false });
+    v.stop = e => e.stopPropagation();
+    return v;
+  }
+}
+</script>
+</body>
+</html>
